@@ -933,6 +933,48 @@ html.noamb .amb,html.noamb .cglow{display:none}
 .card:hover .art img.ld{animation:none;transform:translateY(-3px)}
 .card:focus-visible{outline:3px solid #fff;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.card:hover,.card:focus-visible,.card:hover .art img.ld{transform:none}}
+
+/* Cozy battle presentation: the existing 34×48 trainer art remains pixel sharp. */
+:root{--bg:#19171f;--panel:#25222c;--panel2:#302b37;--line:rgba(245,228,207,.14);--text:#f6efe9;--muted:#c0b4bd}
+body{background:var(--bg)}
+.hero{background:linear-gradient(125deg,#583a3b 0%,#322d38 62%,#30392f 100%);box-shadow:0 12px 30px #100d1238}
+.hero::after{animation:none;opacity:.35}
+.card,.slot,.cp{box-shadow:0 8px 22px #110d1433}
+.slot.empty{border-color:#d7c0b34a;background:#ffffff08}
+.tab{min-height:44px}.btn,.skip{min-height:44px}
+.tab:focus-visible,.btn:focus-visible,.skip:focus-visible,.md:focus-visible,.dc:focus-visible{outline:3px solid #f6e4d0;outline-offset:3px}
+.md,.dc{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.md.on,.dc.on{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent),0 8px 22px #110d1433}
+.arena{background:radial-gradient(ellipse 65% 22% at 20% 52%,#5d7a60 0,transparent 72%),radial-gradient(ellipse 70% 20% at 83% 51%,#496d55 0,transparent 72%),linear-gradient(180deg,#403e60 0%,#77758e 29%,#d9a99c 46%,#6c9271 46.2%,#405e49 100%);box-shadow:0 14px 32px #110d144d}
+.arena::after{animation:none;opacity:.45}
+.plat{background:radial-gradient(ellipse,#9eb48b 0,#708d67 64%,#4c694f);box-shadow:0 8px 18px #17271966,inset 0 2px 5px #ffffff33}
+.hud{background:#28232ef2;border-color:#f1dfce35;box-shadow:0 6px 20px #19151d44}
+.hpb{box-shadow:none;background:#ffffff26}.hpb i{box-shadow:none}
+.turnb{background:#493c49;color:#fff;border:1px solid #f1dfce45;box-shadow:none}
+.cp{background:var(--panel)}
+main:has(.bintro:not([hidden])){z-index:100}
+.vs{background:#29242e;border-color:#f5e5d033;box-shadow:0 24px 60px #100d1280}
+.vs-bg{background:linear-gradient(115deg,#4c4148 0 50%,#384b44 50% 100%)}
+.vs-bg::after{animation:none;background:none}
+.vs-side{min-width:0;gap:12px}
+.trainer-portrait{width:min(100%,260px);height:270px;display:grid;place-items:end center;border-radius:110px 110px 28px 28px;background:linear-gradient(180deg,#e3c1a329,#917b7430);border:1px solid #f5e5d025;box-shadow:inset 0 -16px 30px #241c2529}
+.tr{width:170px;height:240px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 8px 4px #1c182666);animation:none}
+.tr.emo{font-size:6rem;width:auto;height:auto;align-self:center}
+.pkw{width:min(100%,260px);height:270px;min-height:0;display:grid;place-items:end center;border-radius:110px 110px 28px 28px;background:#d5e4c91a;border:1px solid #f5e5d025}
+.pk{max-width:100%;max-height:230px;object-fit:contain}
+.vs-mid{justify-self:center;font-size:2rem;font-style:normal;letter-spacing:.05em;text-shadow:none;color:#f9eadd}
+.who small{color:#e5d4cd}.who b{text-shadow:none}
+.quote{background:#29232de8;border-color:#f5e5d033}
+@media(max-width:800px){
+  .vs{width:min(94vw,470px);height:min(700px,90dvh);grid-template-rows:minmax(0,1fr) auto minmax(0,1fr);gap:2px;padding:48px 10px 14px;border-radius:26px}
+  .vs-side{padding:4px;gap:4px;min-height:0}
+  .trainer-portrait,.pkw{width:150px;height:150px;border-radius:70px 70px 20px 20px;flex:none}
+  .tr{width:102px;height:144px}.pkw .pk{max-width:120px;max-height:140px}
+  .who b{font-size:1rem}.who small{font-size:.65rem}.who .types{margin-top:2px}.balls{gap:4px}.balls i{width:11px;height:11px}
+  .vs-mid{font-size:1.25rem}.skip{top:8px;right:10px}
+}
+@media(max-height:650px) and (max-width:800px){.trainer-portrait,.pkw{height:102px;width:120px}.tr{width:68px;height:96px}.pkw .pk{max-height:96px}}
+@media(prefers-reduced-motion:reduce){.trainer-portrait,.tr,.vs-side,.vs-mid,.arena::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -2101,7 +2143,7 @@ const UI={
   el:s=>$(s==='p'?'b-sp':'b-se'),
   wr:s=>UI.el(s).parentElement,
   hudEl:s=>$(s==='p'?'b-hp':'b-he'),
-  anim(el,kf,o){return el.animate(kf,{...o,duration:UI.ms(o.duration),delay:UI.ms(o.delay||0)}).finished.catch(()=>{})},
+  anim(el,kf,o){const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;return el.animate(kf,{...o,duration:reduced?0:UI.ms(o.duration),delay:reduced?0:UI.ms(o.delay||0)}).finished.catch(()=>{})},
   pos(s){const a=$('ar').getBoundingClientRect(),r=UI.el(s).getBoundingClientRect();return{x:r.left-a.left+r.width/2,y:r.top-a.top+r.height/2}},
 
   open(){
@@ -2432,7 +2474,7 @@ UI.intro=async function(tr){
   const m=BE.act('a'),c1=tc(m.types[0]||'normal'),c2=m.types[1]?tc(m.types[1]):tl(m.types[0]||'normal'),el=$('bt-intro');
   el.className='bintro';
   el.innerHTML=`<div class="vs" style="--c1:${c1};--c2:${c2}"><div class="vs-bg"></div>
-    <div class="vs-side vs-l">${tr.src?`<img class="tr" src="${tr.src}" alt="">`:'<div class="tr emo">🧑</div>'}<div class="who"><small>${tr.cls}</small><b>${tr.name}</b></div></div>
+    <div class="vs-side vs-l"><div class="trainer-portrait">${tr.src?`<img class="tr" src="${tr.src}" alt="">`:'<div class="tr emo" aria-hidden="true">🧑</div>'}</div><div class="who"><small>${tr.cls}</small><b>${tr.name}</b></div></div>
     <div class="vs-mid">VS</div>
     <div class="vs-side vs-r"><div class="pkw"><img class="pk" data-id="${m.id}" alt=""></div><div class="who"><small>Primer Pokémon</small><b>${m.name}</b><div class="types">${m.types.map(badge).join('')}</div></div><div class="balls">${B.a.team.map(()=>'<i></i>').join('')}</div></div>
     <div class="quote">«${esc(tr.quote)}»</div><button class="skip" onclick="UI._skip&&UI._skip()">Saltar ▸</button></div>`;
