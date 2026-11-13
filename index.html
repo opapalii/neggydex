@@ -822,7 +822,7 @@ html.noamb .amb,html.noamb .cglow{display:none}
 .fav:hover{transform:scale(1.2) rotate(12deg);color:#ffd45a}.fav.on{color:#ffd45a;background:#ffd45a2a;animation:pop .4s cubic-bezier(.3,1.7,.5,1)}
 .fchip{flex:none;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:6px 16px 6px 8px;font-size:.82rem;cursor:pointer;transition:background .25s,color .25s,transform .2s}
 .fchip b{display:grid;place-items:center;min-width:26px;height:22px;border-radius:999px;background:#ffd45a26;color:#ffd45a}.fchip:hover{color:var(--text);transform:translateY(-2px)}.fchip.on{color:#fff;border-color:transparent}.fchip.on b{background:#ffffff30;color:#fff}
-.mh>.fvb,.mh>.mnav{position:absolute;z-index:3}
+.mh>.x,.mh>.fvb,.mh>.mnav{position:absolute;z-index:3}
 .fvb{top:14px;right:62px;width:36px;height:36px;border-radius:50%;border:0;background:#0006;color:#ffffff80;font-size:1.15rem;cursor:pointer;transition:transform .25s,color .25s}
 .fvb:hover{transform:scale(1.15) rotate(12deg)}.fvb.on{color:#ffd45a;animation:pop .4s cubic-bezier(.3,1.7,.5,1)}
 .mnav{top:42%;width:40px;height:56px;border:0;border-radius:16px;background:#0006;color:#fff;font-size:1.8rem;line-height:1;cursor:pointer;transition:background .2s,transform .2s}
@@ -1226,7 +1226,7 @@ $('top').onclick=()=>scrollTo({top:0,behavior:'smooth'});
 let all=[],list=[],typeFilter=null,genF=null;
 const GENS=[['I','Kanto',1,151],['II','Johto',152,251],['III','Hoenn',252,386],['IV','Sinnoh',387,493],['V','Teselia',494,649],['VI','Kalos',650,721],['VII','Alola',722,809],['VIII','Galar',810,905],['IX','Paldea',906,1025]];
 const cache={};
-const getMon=async id=>cache[id]||(cache[id]=await (await fetch(API+'pokemon/'+id)).json());
+const getMon=async id=>cache[id]||(cache[id]=await fetchDexJSON(API+'pokemon/'+id));
 const mon1=p=>p.types[0]||'normal';
 
 async function init(){
@@ -1256,7 +1256,16 @@ async function loadDex(){
   const status=$("dex-status"),grid=$("grid");
   grid.setAttribute("aria-busy","true");status.textContent="Cargando datos de la Pokédex…";hideSplash();
   let saved=null;try{const c=JSON.parse(localStorage.getItem("neggydex_base_v1")||"null");if(validBase(c))saved=c}catch(e){}
+  let shown=false;
+  const showBase=base=>{
+    all=base.n.map((name,i)=>({name,id:i+1,key:name.replace(/[^a-z0-9]/g,''),es:pretty(name),types:base.ty[i].slice(),k:name+'|'+(i+1)}));
+    applyFilter();dailyCard();
+    if(!dexInitialized){dexInitialized=true;try{routeHash()}catch(e){}renderTeam();btInit();initNames()}
+    else if(shown)initNames();
+    shown=true;
+  };
   try{
+    if(saved){showBase(saved);grid.setAttribute("aria-busy","false");if(Date.now()-saved.t>=12096e5)status.textContent="Mostrando datos guardados; buscando actualizaciones…"}
     /* 1 petición con los nombres + 18 pequeñas con los tipos de todos los Pokémon */
     let base=saved&&Date.now()-saved.t<12096e5?saved:null;
     let stale=false;
@@ -1270,12 +1279,10 @@ async function loadDex(){
       try{localStorage.setItem('neggydex_base_v1',JSON.stringify(base))}catch(e){}
       }catch(e){if(!saved)throw e;base=saved;stale=true}
     }
-    all=base.n.map((name,i)=>({name,id:i+1,key:name.replace(/[^a-z0-9]/g,''),es:pretty(name),types:base.ty[i].slice(),k:name+'|'+(i+1)}));
-    applyFilter();dailyCard();try{routeHash()}catch(e){}
+    if(base!==saved)showBase(base);
     status.textContent=stale?'No se pudieron actualizar los datos: mostrando datos guardados que pueden estar desactualizados.': '';
     if(stale)addDexRetry(status);
-    if(!dexInitialized){dexInitialized=true;renderTeam();btInit();initNames()}
-    else initNames();
+
   }catch(e){status.textContent='No se pudieron cargar los datos. Comprueba tu conexión y vuelve a intentarlo.';addDexRetry(status)}
   finally{grid.setAttribute('aria-busy','false');dexLoading=false}
 }
@@ -1423,10 +1430,10 @@ async function openModal(id){
     <div class="types" id="mh-types" style="margin-top:8px">${tys.map(badge).join('')}</div>
     <div class="seg"><button class="on" data-s="0" onclick="setShiny(${id},0)">Normal</button><button data-s="1" onclick="setShiny(${id},1)">✨ Shiny</button></div>
     <div class="note" id="sprnote"></div><div class="fchips" id="fchips" hidden></div></div>
-  <div class="mb" id="mbody"><div class="none">Cargando datos…</div></div>`;
+  <div class="mb" id="mbody" role="status" aria-live="polite"><div class="none">Cargando datos…</div></div>`;
   clearTimeout(closeTm);$('ov').classList.remove('closing');$('md').scrollTop=0;$('ov').style.display='flex';document.body.style.overflow='hidden';showSprite(id,false);
   try{const m=await getMon(id);if(modalId===id){$('mbody').innerHTML=bodyHTML(m,tys);loadEvo(id)}}
-  catch(e){if(modalId===id)$('mbody').innerHTML='<div class="none">No se pudieron cargar los datos.</div>'}
+  catch(e){if(modalId===id)$('mbody').innerHTML='<div class="none">No se pudieron cargar los datos. Comprueba tu conexión.<br><button class="btn alt" onclick="openModal('+id+')">Reintentar ficha</button></div>'}
 }
 let closeTm;
 function closeModal(){
