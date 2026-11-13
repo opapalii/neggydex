@@ -975,6 +975,35 @@ main:has(.bintro:not([hidden])){z-index:100}
 }
 @media(max-height:650px) and (max-width:800px){.trainer-portrait,.pkw{height:102px;width:120px}.tr{width:68px;height:96px}.pkw .pk{max-height:96px}}
 @media(prefers-reduced-motion:reduce){.trainer-portrait,.tr,.vs-side,.vs-mid,.arena::after{animation:none!important;transition:none!important}}
+
+/* Field guide: chapter navigation, expedition cover and catalogue entries. */
+.modal{max-width:720px;border-radius:18px;background:#1d2422}.mb{padding:18px 22px 28px}.field-details{display:grid;gap:12px;margin-bottom:18px}.field-detail{padding:20px;background:#29332e;border:1px solid #dce8cf24;border-radius:14px}.field-label{font-size:.6rem;letter-spacing:.16em;color:#c4d4b4;font-weight:800;margin-bottom:12px}.field-detail h4{color:#f3efe6}.mh{border-radius:0 0 24px 24px}.mnav:focus-visible,.fvb:focus-visible,.x:focus-visible{outline:3px solid #f3efd8;outline-offset:2px}
+
+body{background:#171920;color:#f3efe6}.amb,.cglow{display:none}
+header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
+.logo small{letter-spacing:.14em}
+#v-dex .expedition-intro{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:16px;margin-bottom:76px}
+#v-dex .hero{min-width:0;min-height:340px;margin:0;padding:38px;display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,35%);gap:20px;align-items:center;background:#34463d;border:1px solid #b3c9a42b;border-radius:20px;box-shadow:none}
+#v-dex .hero::after{display:none}.hmsg{min-width:0}.eyebrow,.catalog-heading span{color:#cbd7b3;font-size:.67rem;font-weight:800;letter-spacing:.17em}
+#v-dex .hero h1{margin:18px 0 12px;font-size:clamp(2.5rem,4.5vw,4.8rem);line-height:1.02;letter-spacing:-.055em;font-weight:800}
+#v-dex .hero h1 em{font-family:Georgia,serif;font-weight:400;color:#dbe6b6}#v-dex .hero p{max-width:430px;color:#e2e7d8;font-size:1rem;line-height:1.6}
+#v-dex .hbtns{margin-top:24px}#v-dex .hbtns .btn{background:#e6edcf;color:#202c25;border-radius:10px}#v-dex .hbtns .btn.alt{background:#26382f;color:#f6f2e9;border:1px solid #e5eed044}
+#v-dex .daily{min-width:0;width:100%;height:100%;padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:7px;border:1px solid #e8efd22e;border-radius:140px 140px 18px 18px;background:#d4e1c41a;box-shadow:none;text-align:center}
+#v-dex .daily:hover{transform:translateY(-3px);box-shadow:none}#v-dex .daily:focus-visible{outline:3px solid #f2e7cb;outline-offset:3px}
+#v-dex .daily .dp{width:140px;height:140px;margin:5px 0;background:#e5f0d51c}#v-dex .daily .dn{align-self:auto;font-size:1.5rem}#v-dex .daily .types{justify-content:center;align-self:center}.dl{color:#e0ebce!important}
+.trail-links{display:grid;gap:8px}.trail-links button{position:relative;text-align:left;cursor:pointer;color:#f7f0e5;background:#252a2b;border:1px solid #edf3d723;border-radius:14px;padding:18px;display:flex;flex-direction:column;justify-content:center;gap:5px}.trail-links button:hover,.trail-links button:focus-visible{background:#334039;border-color:#d6e3bb}.trail-links span{font-size:.6rem;letter-spacing:.13em;color:#b8cba9;font-weight:800}.trail-links b{font-size:1rem}.trail-links small{color:#bebfbb;font-size:.75rem}.trail-links i{position:absolute;right:18px;top:16px;font-style:normal;color:#d9e8b7}
+.catalog-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;border-top:1px solid #e5e0d22b;padding-top:34px;margin-bottom:24px}.catalog-heading h2{font-size:clamp(1.8rem,3vw,2.8rem);letter-spacing:-.045em;margin:8px 0 2px}.catalog-heading p{color:#bfbeb6}.catalog-count{color:#d6dec4;font-size:.78rem;font-weight:700;white-space:nowrap}
+#v-dex .search{margin:0 0 18px;padding:18px;border:1px solid #ffffff18;border-radius:16px;background:#202428}.search .sbox{max-width:none!important;height:52px;background:#151b1c;border-color:#e5e7d329;border-radius:10px}.filter-row{display:flex;align-items:center;gap:14px;margin-top:12px;min-width:0}.filter-row>span{width:52px;flex:none;color:#afbbb0;font-size:.6rem;font-weight:800;letter-spacing:.15em}.filter-row .chips{margin:0;flex:1;min-width:0}.catalog-controls{display:flex;justify-content:flex-end;margin-top:12px}.catalog-controls select{min-height:40px}
+#v-dex .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#v-dex .card{min-width:0;min-height:166px;display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;text-align:left;padding:14px;background:#242a29;border:1px solid #d9e2c629;border-radius:16px;box-shadow:none;contain-intrinsic-size:auto 166px}
+#v-dex .card::before{inset:0 auto 0 0;width:132px;background:var(--c);opacity:.16;border-radius:15px 60px 60px 15px}#v-dex .card::after{display:none}
+#v-dex .card .art{width:110px;height:130px;margin:0;padding:0;align-items:center;overflow:hidden;z-index:1}#v-dex .card .art img{max-width:100%;max-height:100%;object-fit:contain}
+#v-dex .card-info{min-width:0;position:relative;z-index:1;padding:18px 8px 6px 12px}#v-dex .card-info small{font-size:.55rem;letter-spacing:.13em;color:#b8c4b1;font-weight:800}#v-dex .card h3{font-size:1.1rem;margin:8px 0}#v-dex .card .types{justify-content:flex-start}#v-dex .card-more{display:block;color:#cbd8b9;font-size:.72rem;margin-top:14px}
+#v-dex .card .num{display:none}#v-dex .card .fav{top:10px;right:10px}#v-dex .card:hover,#v-dex .card:focus-visible{transform:translateY(-2px);border-color:var(--c);box-shadow:none}
+@media(min-width:1101px){.tab .tdx{display:none}.logo .t{font-size:1.15rem}header{position:fixed;inset:0 auto 0 0;width:210px;transform:none!important;border-right:1px solid #ffffff18}header .bar{height:100%;display:flex;flex-direction:column;align-items:stretch;gap:20px;padding:28px 18px}.logo{margin-bottom:28px}.logo svg{width:42px;height:42px}.logo .wm{min-width:0}.tabs{position:static;display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:0;background:none;margin:0}.tind{display:none}.tab{display:flex;align-items:center;text-align:left;padding:13px 14px;border-radius:10px;color:#c5c7bd}.tab.on{background:#dce8c4;color:#26302a}.tab .ti{width:24px}.hacts{margin-top:auto;display:flex;gap:8px}main{margin-left:210px;max-width:none;padding:28px 36px 90px}.foot{margin-left:210px}}
+@media(max-width:1100px){#v-dex .expedition-intro{grid-template-columns:minmax(0,1fr);gap:12px}.trail-links{grid-template-columns:repeat(3,1fr)}.trail-links button{min-height:100px}#v-dex .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){#v-dex .expedition-intro{margin-bottom:48px}#v-dex .hero{grid-template-columns:1fr minmax(100px,35%);padding:24px 20px;min-height:255px;gap:10px}#v-dex .hero h1{font-size:clamp(2rem,8vw,2.8rem)}#v-dex .hero p{font-size:.85rem;line-height:1.45}#v-dex .daily{min-height:195px;padding:10px 5px;border-radius:70px 70px 14px 14px}#v-dex .daily .dp{width:90px;height:90px}#v-dex .daily .dp img{max-width:90px;max-height:90px}#v-dex .daily .dn{font-size:.9rem}#v-dex .daily .types{display:none}.dl{font-size:.55rem;letter-spacing:.05em}.trail-links{gap:6px}.trail-links button{padding:12px 9px;min-height:90px}.trail-links b{font-size:.78rem}.trail-links small{display:none}.trail-links span{font-size:.48rem}.trail-links i{right:9px;top:8px}#v-dex .grid{grid-template-columns:1fr}.catalog-heading{align-items:start}.catalog-heading h2{font-size:1.7rem}.filter-row{align-items:start}.filter-row>span{padding-top:11px}.catalog-count{font-size:.68rem}#v-dex .card{min-height:150px}.hbtns .btn{font-size:.78rem;padding:10px 12px}}
+@media(prefers-reduced-motion:reduce){#v-dex .card:hover,#v-dex .daily:hover{transform:none}}
 </style>
 </head>
 <body>
@@ -999,18 +1028,25 @@ main:has(.bintro:not([hidden])){z-index:100}
 
 <main>
 <section class="view on" id="v-dex">
-  <div class="search" id="sb">
-      <div class="sbox">
-        <svg class="sicon" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8"/></svg>
-        <input id="q" type="search" placeholder="Busca por nombre, número, tipo o gen: pikachu, fuego, gen 3…" autocomplete="off" spellcheck="false" aria-label="Buscar Pokémon">
-        <button class="sclear" id="qclear" hidden aria-label="Borrar búsqueda">×</button>
-        <kbd title="Pulsa / para buscar">/</kbd>
-      </div>
-      <div class="chips gens" id="gens"></div>
-      <div class="chips" id="chips"></div>
+  <div class="expedition-intro">
+    <div class="hero"><div class="hmsg" id="hero"></div><div class="daily" id="daily" role="button" tabindex="0" aria-label="Abrir Pokémon del día"></div></div>
+    <div class="trail-links" aria-label="Explorar NeggyDex">
+      <button type="button" onclick="view('team')"><span>01 / PREPARAR</span><b>Tu equipo</b><small>Reúne a tus compañeros</small><i aria-hidden="true">→</i></button>
+      <button type="button" onclick="view('battle')"><span>02 / COMBATIR</span><b>Arena de combate</b><small>Pon a prueba tu estrategia</small><i aria-hidden="true">→</i></button>
+      <button type="button" onclick="view('games');if(!GM.mode)gHome()"><span>03 / DESCANSAR</span><b>Juegos</b><small>Un alto en el camino</small><i aria-hidden="true">→</i></button>
     </div>
-  <div class="hero"><div class="hmsg" id="hero"></div><div class="daily" id="daily"></div></div>
-  <div class="crow"><div class="count" id="count"></div><label class="sortl">Ordenar <select id="sortSel"><option value="id">Nº Pokédex</option><option value="az">Nombre A–Z</option><option value="za">Nombre Z–A</option><option value="fav">Favoritos primero</option><option value="type">Por tipo</option></select></label></div>
+  </div>
+  <div class="catalog-heading"><div><span>CUADERNO DE CAMPO / 01</span><h2>Explora la Pokédex</h2><p>Encuentra a tu próximo compañero.</p></div><div class="catalog-count" id="count"></div></div>
+  <div class="search" id="sb">
+    <div class="sbox">
+      <svg class="sicon" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8"/></svg>
+      <input id="q" type="search" placeholder="Busca por nombre, número, tipo o generación" autocomplete="off" spellcheck="false" aria-label="Buscar Pokémon">
+      <button class="sclear" id="qclear" hidden aria-label="Borrar búsqueda">×</button><kbd title="Pulsa / para buscar">/</kbd>
+    </div>
+    <div class="filter-row"><span>REGIÓN</span><div class="chips gens" id="gens"></div></div>
+    <div class="filter-row"><span>TIPO</span><div class="chips" id="chips"></div></div>
+    <div class="catalog-controls"><label class="sortl">Ordenar <select id="sortSel"><option value="id">Nº Pokédex</option><option value="az">Nombre A–Z</option><option value="za">Nombre Z–A</option><option value="fav">Favoritos primero</option><option value="type">Por tipo</option></select></label></div>
+  </div>
   <div id="dex-status" role="status" aria-live="polite"></div>
   <div class="grid" id="grid" aria-busy="true"></div>
 </section>
@@ -1237,7 +1273,7 @@ $('logo').onclick=goHome;
 $('logo').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();goHome()}});
 /* Saludo según la hora */
 (function(){const h=new Date().getHours(),g=h<6?['Buenas noches','🌙']:h<13?['Buenos días','☀️']:h<20?['Buenas tardes','🌤️']:['Buenas noches','🌙'];
-  $('hero').innerHTML='<h1>'+g[0]+', entrenador <span class="wave">👋</span></h1><p>1025 Pokémon te esperan. Ponte cómodo y explora '+g[1]+'</p><div class="hbtns"><button class="btn" onclick="randMon()">🎲 Pokémon al azar</button><button class="btn alt" onclick="cmdOpen()">🔍 Buscar en todo</button></div>'})();
+  $('hero').innerHTML='<div class="eyebrow">NEGGYDEX / TU AVENTURA EMPIEZA AQUÍ</div><h1>El mundo Pokémon,<br><em>a tu ritmo.</em></h1><p>'+g[0]+', entrenador. Explora, prepara tu equipo y encuentra tu próxima historia.</p><div class="hbtns"><button class="btn" onclick="document.getElementById(&quot;sb&quot;).scrollIntoView({behavior:&quot;smooth&quot;});document.getElementById(&quot;q&quot;).focus({preventScroll:true})">Explorar la Pokédex <span aria-hidden="true">→</span></button><button class="btn alt" onclick="randMon()">Pokémon al azar</button></div>'})();
 /* Marcador del buscador que se escribe solo */
 (function(){const ex=['pikachu','charizard','25','gengar','eevee','150','mimikyu','lucario'],q=$('q');let i=0,j=0,del=false,hold=0;
   setInterval(()=>{if(document.activeElement===q||q.value)return;
@@ -1360,7 +1396,7 @@ function fit(img){
 }
 function cardHTML(p,i){
   const c1=tc(mon1(p)),c2=p.types[1]?tc(p.types[1]):tl(mon1(p));
-  return `<div class="card rv" tabindex="0" data-id="${p.id}" data-t="${mon1(p)}" style="--c:${c1};--c1:${c1};--c2:${c2};--g1:${c1}40;--g2:${c2}40;--d:${(i%5)*55}ms"><span class="num">#${String(p.id).padStart(4,'0')}</span><button class="fav ${FAV.has(p.id)?'on':''}" data-fav="${p.id}" aria-label="Favorito" title="Favorito">★</button><div class="art"><img data-id="${p.id}" src="${cardSrcs(p)[0]}" alt="" loading="lazy" decoding="async" onload="fit(this)" onerror="imgNext(this)"></div><h3>${p.es}</h3><div class="types">${p.types.map(badge).join('')}</div></div>`;
+  return `<div class="card rv" tabindex="0" data-id="${p.id}" data-t="${mon1(p)}" style="--c:${c1};--c1:${c1};--c2:${c2};--g1:${c1}40;--g2:${c2}40;--d:${(i%5)*55}ms"><span class="num">#${String(p.id).padStart(4,'0')}</span><button class="fav ${FAV.has(p.id)?'on':''}" data-fav="${p.id}" aria-label="Favorito" title="Favorito">★</button><div class="art"><img data-id="${p.id}" src="${cardSrcs(p)[0]}" alt="" loading="lazy" decoding="async" onload="fit(this)" onerror="imgNext(this)"></div><div class="card-info"><small>REGISTRO / ${String(p.id).padStart(4,'0')}</small><h3>${p.es}</h3><div class="types">${p.types.map(badge).join('')}</div><span class="card-more">Ver ficha <span aria-hidden="true">→</span></span></div></div>`;
 }
 /* Aparición suave de las tarjetas al llegar a pantalla (escalonada por columna) */
 const io=new IntersectionObserver(es=>es.forEach(e=>{
@@ -1390,7 +1426,7 @@ function dailyCard(){
   const id=1+(Math.floor(Date.now()/864e5)*7919)%all.length,p=all[id-1],c1=tc(mon1(p)),c2=p.types[1]?tc(p.types[1]):tl(mon1(p));
   el.style.cssText='--c1:'+c1+';--c2:'+c2;
   el.innerHTML='<div class="dl">✨ Pokémon del día</div><div class="dp"><img data-id="'+id+'" alt=""></div><div class="dn">'+p.es+'</div><div class="types">'+p.types.map(badge).join('')+'</div>';
-  el.onclick=()=>openModal(id);animInto(el.querySelector('img'),id,false,112);
+  el.onclick=()=>openModal(id);el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openModal(id)}};animInto(el.querySelector('img'),id,false,112);
 }
 /* ---------- Debilidades e inmunidades ---------- */
 function matchups(types){
@@ -1412,9 +1448,9 @@ let modalId=0;
 const statsHTML=m=>`<div class="facts"><div><b>${(m.height/10).toFixed(1).replace('.',',')} m</b>Altura</div><div><b>${(m.weight/10).toFixed(1).replace('.',',')} kg</b>Peso</div><div><b>${m.stats.reduce((x,y)=>x+y.base_stat,0)}</b>Total</div></div>
     ${m.stats.map((s,i)=>{const[n,c]=STATS[s.stat.name];return `<div class="stat" style="--i:${i}"><span>${n}</span><b>${s.base_stat}</b><div class="track"><div class="fill" style="width:${Math.min(100,s.base_stat/180*100)}%;background:${c}"></div></div></div>`}).join('')}
     <h4>Habilidades</h4>${m.abilities.map(a=>`<span class="ab">${abiName(a.ability.name)}${a.is_hidden?' (oculta)':''}</span>`).join('')}`;
-const bodyHTML=(m,tys)=>`<div id="mstats">${statsHTML(m)}</div>
-    <div id="evo"><div class="none">Cargando evolución…</div></div>
-    <h4>Debilidades y resistencias</h4><div id="mweak">${weakHTML(tys)}</div>
+const bodyHTML=(m,tys)=>`<div class="field-details"><section class="field-detail"><div class="field-label">01 / PERFIL</div><div id="mstats">${statsHTML(m)}</div></section>
+    <section class="field-detail"><div class="field-label">02 / LINAJE</div><div id="evo"><div class="none">Cargando evolución…</div></div></section>
+    <section class="field-detail"><div class="field-label">03 / AFINIDADES</div><h4>Debilidades y resistencias</h4><div id="mweak">${weakHTML(tys)}</div></section></div>
     <div style="display:flex;gap:10px"><button class="calcgo" onclick="closeModal();setSide('a',${m.id});view('calc')">Usar de atacante</button><button class="calcgo" style="background:var(--panel2)" onclick="closeModal();setSide('d',${m.id});view('calc')">Usar de defensor</button></div>`;
 /* Sprites animados pixel art estilo Blanco/Negro (Pokémon Showdown "gen5ani": 2D, sin modelos 3D).
    Orden: GIF animado -> GIF animado de PokeAPI -> PNG estático (con animación de reposo por CSS) */
