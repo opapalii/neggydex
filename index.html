@@ -969,7 +969,8 @@ html.noamb .amb,html.noamb .cglow{display:none}
     </div>
   <div class="hero"><div class="hmsg" id="hero"></div><div class="daily" id="daily"></div></div>
   <div class="crow"><div class="count" id="count"></div><label class="sortl">Ordenar <select id="sortSel"><option value="id">Nº Pokédex</option><option value="az">Nombre A–Z</option><option value="za">Nombre Z–A</option><option value="fav">Favoritos primero</option><option value="type">Por tipo</option></select></label></div>
-  <div class="grid" id="grid"></div>
+  <div id="dex-status" role="status" aria-live="polite"></div>
+  <div class="grid" id="grid" aria-busy="true"></div>
 </section>
 
 <section class="view" id="v-calc">
@@ -1240,20 +1241,46 @@ async function init(){
   attach($('a-name'),q=>rank(all,q),m=>`<img src="${mini(m.id)}" alt="" loading="lazy"><span class="on">${m.es}</span><span class="oid">#${String(m.id).padStart(4,'0')}</span>`,m=>m.es,m=>{$('a-name').value=m.es;pickMon('a',m.id)});
   attach($('d-name'),q=>rank(all,q),m=>`<img src="${mini(m.id)}" alt="" loading="lazy"><span class="on">${m.es}</span><span class="oid">#${String(m.id).padStart(4,'0')}</span>`,m=>m.es,m=>{$('d-name').value=m.es;pickMon('d',m.id)});
   attach($('mv-name'),q=>rank(MOVESD,q,3000),m=>`<span class="mvn">${m.n}</span>${m.t?badge(m.t):''}<span class="mvc">${m.c?CAT[m.c]:''}${m.c&&m.c!=='status'?' · '+(m.p||'—'):''}</span>`,m=>m.n,m=>{$('mv-name').value=m.n;pickMove(m.slug)});
+  loadTeams();
+  loadDex();
+}
+
+async function fetchDexJSON(url){
+  const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),10000);
+  try{const response=await fetch(url,{signal:controller.signal});if(!response.ok)throw new Error("HTTP "+response.status);return await response.json()}finally{clearTimeout(timer)}
+}
+function validBase(c){return c&&Array.isArray(c.n)&&c.n.length===1025&&c.n.every(n=>typeof n==="string"&&n.length)&&Array.isArray(c.ty)&&c.ty.length===1025&&c.ty.every(t=>Array.isArray(t)&&t.every(x=>typeof x==="string"))&&Number.isFinite(c.t)}
+let dexLoading=false,dexInitialized=false;
+async function loadDex(){
+  if(dexLoading)return;dexLoading=true;
+  const status=$("dex-status"),grid=$("grid");
+  grid.setAttribute("aria-busy","true");status.textContent="Cargando datos de la Pokédex…";hideSplash();
+  let saved=null;try{const c=JSON.parse(localStorage.getItem("neggydex_base_v1")||"null");if(validBase(c))saved=c}catch(e){}
   try{
     /* 1 petición con los nombres + 18 pequeñas con los tipos de todos los Pokémon */
-    let base=null;try{const c=JSON.parse(localStorage.getItem('neggydex_base_v1')||'null');if(c&&c.n&&c.n.length===1025&&Date.now()-c.t<12096e5)base=c}catch(e){}
+    let base=saved&&Date.now()-saved.t<12096e5?saved:null;
+    let stale=false;
     if(!base){
-      const [d,td]=await Promise.all([fetch(API+'pokemon-species?limit=1025').then(r=>r.json()),Promise.all(Object.keys(TYPES).map(t=>fetch(API+'type/'+t).then(r=>r.json())))]);
+      try{
+      const [d,td]=await Promise.all([fetchDexJSON(API+'pokemon-species?limit=1025'),Promise.all(Object.keys(TYPES).map(t=>fetchDexJSON(API+'type/'+t)))]);
       const ty=Array.from({length:1025},()=>[]);
       td.forEach(t=>t.pokemon.forEach(x=>{const id=+x.pokemon.url.split('/')[6];if(id<=1025)ty[id-1][x.slot-1]=t.name}));
       base={t:Date.now(),n:d.results.map(p=>p.name),ty:ty.map(a=>a.filter(Boolean))};
+      if(!validBase(base))throw new Error('Datos incompletos');
       try{localStorage.setItem('neggydex_base_v1',JSON.stringify(base))}catch(e){}
+      }catch(e){if(!saved)throw e;base=saved;stale=true}
     }
     all=base.n.map((name,i)=>({name,id:i+1,key:name.replace(/[^a-z0-9]/g,''),es:pretty(name),types:base.ty[i].slice(),k:name+'|'+(i+1)}));
-    applyFilter();dailyCard();hideSplash();try{routeHash()}catch(e){}
-  }catch(e){$('grid').innerHTML='<div class="empty">No se pudo cargar la Pokédex. Revisa tu conexión.</div>';hideSplash();return}
-  loadTeams();renderTeam();btInit();initNames();
+    applyFilter();dailyCard();try{routeHash()}catch(e){}
+    status.textContent=stale?'No se pudieron actualizar los datos: mostrando datos guardados que pueden estar desactualizados.': '';
+    if(stale)addDexRetry(status);
+    if(!dexInitialized){dexInitialized=true;renderTeam();btInit();initNames()}
+    else initNames();
+  }catch(e){status.textContent='No se pudieron cargar los datos. Comprueba tu conexión y vuelve a intentarlo.';addDexRetry(status)}
+  finally{grid.setAttribute('aria-busy','false');dexLoading=false}
+}
+function addDexRetry(status){
+  const button=document.createElement('button');button.className='btn alt';button.textContent='Reintentar';button.onclick=loadDex;status.append(' ',button);
 }
 /* Los nombres en español llegan después y se cambian sin volver a pintar las imágenes */
 async function initNames(){
