@@ -926,6 +926,13 @@ html.noamb .amb,html.noamb .cglow{display:none}
 .egg img{width:240px;image-rendering:pixelated;display:block;margin:0 auto 10px;filter:drop-shadow(0 12px 20px #000a);animation:eggJ .6s ease-in-out infinite alternate}
 .egg b{font-size:1.4rem;text-shadow:0 2px 12px #000}.egg small{display:block;opacity:.7;margin-top:6px;font-weight:600}
 @keyframes eggIn{from{opacity:0}}@keyframes eggPop{from{transform:scale(.3) rotate(-10deg);opacity:0}}@keyframes eggJ{to{transform:translateY(-14px)}}
+/* Primera fase: tarjetas más legibles y movimiento contenido. */
+.card{background:var(--panel);border:1px solid rgba(255,255,255,.14);box-shadow:0 8px 24px #0003}
+.card:hover,.card:focus-visible{border-color:var(--c);box-shadow:0 12px 26px #0005;transform:translateY(-3px)}
+.card:hover::after,.card:focus-visible::after{animation:none;opacity:0}
+.card:hover .art img.ld{animation:none;transform:translateY(-3px)}
+.card:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.card:hover,.card:focus-visible,.card:hover .art img.ld{transform:none}}
 </style>
 </head>
 <body>
