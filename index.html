@@ -1033,6 +1033,37 @@ header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
 #v-calc .duel{gap:22px}#v-calc .side,#v-calc .move,#v-calc details,#v-calc .result{background:#242d29;border:1px solid #dce8cf24;border-radius:16px;box-shadow:none}#v-calc .side{padding:24px}#v-calc .duel::after{background:#dce8c4;color:#24342b;box-shadow:0 0 0 6px #171920;animation:none}#v-calc .side h3{margin-bottom:12px}#v-calc .pick{border-radius:12px;background:#1b221f}#v-calc .calcbar{justify-content:flex-end}
 #v-games .thead,#v-battle .thead{background:#34463d;border-radius:18px;border:1px solid #b3c9a43a;box-shadow:none}#v-games .thead::after,#v-battle .thead::after{animation:none;opacity:.1}#v-games .gcard{border-radius:16px;background:#242d29;border:1px solid #dce8cf24;box-shadow:none}#v-games .gcard:focus-visible{outline:3px solid #f3efd8;outline-offset:3px}#v-games .gprev{border-radius:12px;background:#18211e;padding:12px;min-height:96px}#v-battle .panel,#v-battle .cp{background:#242d29;border:1px solid #dce8cf24;border-radius:16px;box-shadow:none}
 @media(max-width:700px){.field-section-heading{padding:24px}#v-calc .side{padding:18px}}
+
+/* Field controls: solid action, inset tool, selection and danger. */
+:root{--ctl-surface:#29352f;--ctl-edge:#899d84;--ctl-ink:#f5f2e8;--ctl-key:#d8e5bf;--ctl-danger:#f4c6bc}
+:is(button,select,summary,[role="button"]){touch-action:manipulation}
+:is(button,select,summary,[role="button"]):focus-visible{outline:3px solid #f6e4ad!important;outline-offset:3px!important}
+:is(button):disabled{cursor:not-allowed;filter:saturate(.45);opacity:.52}
+:is(button):not(:disabled){cursor:pointer}
+:is(.btn,.go,.calcgo,.bm,.mc,.dc,.sw,.chip,.gchip,.fchip,.gpc,.atabs button,.seg button,.fchips button,.skip,.ib,.fav,.fvb,.x,.shb,.mnav,.rm,.tx,.kk,.trail-links button,.gcard,.tc,.en){transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+:is(.btn,.go,.calcgo){min-height:46px;border-radius:12px;border:1px solid #a3b993;background:#d9e6c4;color:#1b2c23;font-weight:800;box-shadow:inset 0 -3px 0 #718668,0 3px 0 #101b15;letter-spacing:.01em}
+:is(.btn.alt,.calcgo[style]){background:#2b3931!important;color:#f3f0df!important;border:1px solid #8da58b;box-shadow:inset 0 -3px 0 #1b2821,0 3px 0 #111b16}
+:is(.danger,.rm,.tx){background:#563638!important;color:#ffe6dc!important;border:1px solid #bd8780!important}
+:is(.btn,.go,.calcgo):hover:not(:disabled){filter:brightness(1.08);transform:translateY(-2px)}
+:is(.btn,.go,.calcgo):active:not(:disabled){transform:translateY(2px);box-shadow:inset 0 -1px 0 #718668}
+:is(.chip,.gchip,.fchip,.gpc,.atabs button,.seg button,.fchips button){min-height:40px;border-radius:10px;border:1px solid #718574;background:#27312d;color:#e5ebdc;font-weight:700;box-shadow:none}
+:is(.chip.on,.gchip.on,.fchip.on,.gpc.on,.atabs button.on,.seg button.on,.fchips button.on){background:#d6e4bd!important;color:#223029!important;border-color:#e9f1d4!important;box-shadow:inset 0 -3px 0 #93ab83!important}
+:is(.chip,.gchip,.fchip,.gpc,.atabs button,.seg button,.fchips button):hover{border-color:#d9e8c9}
+:is(.ib,.fav,.fvb,.x,.shb,.mnav,.rm,.tx,.sclear,.totop){min-width:40px;min-height:40px;display:inline-grid;place-items:center;border-radius:12px;border:1px solid #8da08a;background:#29362f;color:#f8f1e0;box-shadow:inset 0 -2px 0 #19261f}
+:is(.ib,.fav,.fvb,.x,.shb,.mnav,.rm,.tx,.sclear,.totop):hover{border-color:#e2efc6;filter:brightness(1.1)}
+:is(.fav.on,.fvb.on){color:#ffdf7d;border-color:#e8cd81;background:#554c30}
+:is(.bm,.mc,.dc,.sw,.gcard,.trail-links button,.tc,.en){border:1px solid #819483;background:#29352f;color:#f4f0e6;border-radius:14px;box-shadow:inset 0 -3px 0 #1b2720}
+:is(.bm,.mc,.dc,.sw,.gcard,.trail-links button,.tc,.en):hover:not(:disabled){border-color:#dfebc2;transform:translateY(-2px)}
+:is(.dc.on,.tc.act){border-color:#d7e7ba;box-shadow:inset 0 0 0 2px #c7dba9,inset 0 -3px 0 #1b2720}
+.tab .ti svg{display:block;width:21px;height:21px}.tab{gap:8px}.tab.on{color:#26362b}.tab:active{transform:scale(.98)}
+:is(input:not([type=checkbox]),select){border:1px solid #788c7e;border-radius:10px;background:#1e2923;color:#f5f1e7}
+:is(input:not([type=checkbox]),select):focus-visible{outline:3px solid #f6e4ad;outline-offset:2px}
+.tgl input,.bopt input{accent-color:#c7dcae;width:20px;height:20px}
+.kk{border:1px solid #758977;background:#29352f;box-shadow:inset 0 -3px 0 #19261f}
+.kk.ok{background:#327247}.kk.near{background:#9a7224}.kk.no{background:#505054}
+.setp,.cmdb,.modal,.rc{border:1px solid #91a18d;border-radius:18px;box-shadow:0 18px 45px #090f0db3}
+@media(max-width:700px){.tab .ti svg{width:19px;height:19px}.tab{gap:3px}.chip,.gchip,.fchip,.gpc{min-height:44px}.sw2{width:44px;height:44px}.rm,.tx,.fav{min-width:44px;min-height:44px}}
+@media(prefers-reduced-motion:reduce){:is(button,select,summary,[role="button"]){transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -1044,11 +1075,11 @@ header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
   <div class="bar">
     <div class="logo" id="logo" role="button" tabindex="0" title="Ir al inicio"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lgT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a8f"/><stop offset=".55" stop-color="#ff4d5e"/><stop offset="1" stop-color="#b5309a"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#c7cbe6"/></linearGradient><linearGradient id="lgR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".5" stop-color="#ff7a6b"/><stop offset="1" stop-color="#6890f0"/></linearGradient></defs><path d="M4 32a28 28 0 0 1 56 0z" fill="url(#lgT)"/><path d="M4 32a28 28 0 0 0 56 0z" fill="url(#lgB)"/><rect x="4" y="29" width="56" height="6" fill="#161927"/><circle cx="32" cy="32" r="29" fill="none" stroke="url(#lgR)" stroke-width="4"/><circle cx="32" cy="32" r="13" fill="#161927"/><circle cx="32" cy="32" r="10" fill="#fff"/><path d="M27 38V26l10 12V26" fill="none" stroke="#161927" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 22a23 23 0 0 1 13-11" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round" fill="none"/></svg><span class="wm"><span class="t"><span class="n1">Neggy</span><b>Dex</b></span><small>Pokédex · Calculadora</small></span></div>
     <nav class="tabs"><span class="tind" id="tind"></span>
-      <button class="tab on" id="t-dex"><span class="ti">📖</span><span class="tl">Pokédex</span></button>
-      <button class="tab" id="t-calc"><span class="ti">🧮</span><span class="tl">Calculadora<span class="tdx"> de daño</span></span></button>
-      <button class="tab" id="t-team"><span class="ti">🛡️</span><span class="tl">Equipos</span></button>
-      <button class="tab" id="t-battle"><span class="ti">⚔️</span><span class="tl">Combate</span></button>
-      <button class="tab" id="t-games"><span class="ti">🎮</span><span class="tl">Juegos</span></button>
+      <button class="tab on" id="t-dex"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5c3-1 5-1 8 1v13c-3-2-5-2-8-1zM20 5.5c-3-1-5-1-8 1v13c3-2 5-2 8-1z"/></svg></span><span class="tl">Pokédex</span></button>
+      <button class="tab" id="t-calc"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2m4 0h2m-8 4h2m4 0h2m-8 4h2m4 0h2"/></svg></span><span class="tl">Calculadora<span class="tdx"> de daño</span></span></button>
+      <button class="tab" id="t-team"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v5c0 5 3 8 8 10 5-2 8-5 8-10V6zM9 12l2 2 4-4"/></svg></span><span class="tl">Equipos</span></button>
+      <button class="tab" id="t-battle"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 3 7 7-3 3-6-7zm14 0-7 7 3 3 6-7zM7 13l4 4m6-4-4 4M5 19l3 2m11-2-3 2"/></svg></span><span class="tl">Combate</span></button>
+      <button class="tab" id="t-games"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10c2 0 3 2 4 7s-1 6-4 3l-2-2H9l-2 2c-3 3-5 2-4-3s2-7 4-7ZM7 11v4m-2-2h4m7-1h.1m2 2h.1"/></svg></span><span class="tl">Juegos</span></button>
     </nav>
     <div class="hacts"><button class="ib" id="b-pal" title="Buscar en todo (Ctrl+K)" aria-label="Buscar en todo">🔍</button><button class="ib" id="b-set" title="Ajustes" aria-label="Ajustes">⚙️</button></div>
   </div>
@@ -1165,7 +1196,7 @@ header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
     <div class="panel">
       <div class="tp"><h3>Tu equipo</h3>
         <div class="acts"><select id="bt-imp" onchange="btImport(this.value);this.value=''" aria-label="Importar equipo"></select>
-          <button class="btn alt" onclick="btRandom()">🎲 Aleatorio</button><button class="btn alt" onclick="btClear()">Vaciar</button></div></div>
+          <button class="btn alt" onclick="btRandom()">🎲 Aleatorio</button><button class="btn alt danger" onclick="btClear()">Vaciar</button></div></div>
       <div class="slots" id="bt-slots"></div>
       <button class="go" id="bt-go" onclick="btStart()">⚔️ Comenzar combate</button>
       <div class="berr" id="bt-err"></div>
@@ -1682,7 +1713,7 @@ function evoHTML(root,cur){
   if(!root.evolves_to.length)return '<h4>Evolución</h4><div class="enone">Este Pokémon no evoluciona.</div>';
   const node=n=>{
     const id=idOf(n.species.url),nm=evName(n.species);
-    const card=`<div class="en ${id===cur?'cur':''}" ${id<=1025?`onclick="openModal(${id})"`:''}><img src="${mini(id)}" alt=""><div><b>${nm}</b><small>#${String(id).padStart(4,'0')}</small></div></div>`;
+    const card=`<div class="en ${id===cur?'cur':''}" ${id<=1025?`role="button" tabindex="0" onclick="openModal(${id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openModal(${id})}"`:''}><img src="${mini(id)}" alt=""><div><b>${nm}</b><small>#${String(id).padStart(4,'0')}</small></div></div>`;
     const kids=n.evolves_to.filter((k,i,a)=>a.findIndex(z=>z.species.name===k.species.name)===i);
     const sub=kids.map(k=>`<div class="eb"><div class="el"><span class="ea">↓</span><div class="ps">${evoPills(k.evolution_details)}</div></div>${node(k)}</div>`).join('');
     return card+(kids.length>1?`<div class="multi">${sub}</div>`:sub);
@@ -1728,7 +1759,7 @@ function delTeam(id){
 function rmSlot(i){TEAM.m[i]=null;renderTeam()}
 function rmMove(i,j){TEAM.m[i].mv.splice(j,1);renderTeam()}
 function renderSaved(){
-  $('saved').innerHTML=TEAMS.length?TEAMS.map(t=>`<div class="tc ${t.id===TEAM.id?'act':''}" onclick="loadTeam('${t.id}')"><div class="tn">${esc(t.name)}</div><div class="tsp">${t.m.map(s=>s?`<img src="${mini(s.id)}" alt="">`:'<i></i>').join('')}</div><button class="tx" onclick="event.stopPropagation();delTeam('${t.id}')" aria-label="Eliminar equipo">🗑</button></div>`).join(''):'<div class="none" style="text-align:left">Aún no has guardado ningún equipo.</div>';
+  $('saved').innerHTML=TEAMS.length?TEAMS.map(t=>`<div class="tc ${t.id===TEAM.id?'act':''}" role="button" tabindex="0" onclick="loadTeam('${t.id}')" onkeydown="if(event.target===this&&(event.key==='Enter'||event.key===' ')){event.preventDefault();loadTeam('${t.id}')}"><div class="tn">${esc(t.name)}</div><div class="tsp">${t.m.map(s=>s?`<img src="${mini(s.id)}" alt="">`:'<i></i>').join('')}</div><button class="tx" onclick="event.stopPropagation();delTeam('${t.id}')" aria-label="Eliminar equipo">🗑</button></div>`).join(''):'<div class="none" style="text-align:left">Aún no has guardado ningún equipo.</div>';
 }
 const STATK=[['hp','PS','#4ade80'],['attack','Atq','#f87171'],['defense','Def','#fbbf24'],['special-attack','AtE','#60a5fa'],['special-defense','DeE','#a78bfa'],['speed','Vel','#f472b6']];
 const TABS=[['res','📋 Resumen'],['def','🛡️ Defensa'],['off','⚔️ Ataque'],['sta','📊 Estadísticas']];
@@ -2648,7 +2679,7 @@ function gOpen(m){
   GM.mode=m;$('gm-home').hidden=true;$('gm-area').hidden=false;window.scrollTo({top:0});
   if(m==='w')wStart();else if(m==='g')gStart();else if(m==='s')sdStart();else xStart(m);
 }
-const gBar=(title,extra,again)=>`<div class="gbar"><button class="btn alt" onclick="gHome()">← Juegos</button><h3>${title}</h3>${extra}<button class="btn alt" onclick="gStatsOpen()" title="Estadísticas">📊</button><button class="btn alt" onclick="${again}">🎲 Otro Pokémon</button></div>`;
+const gBar=(title,extra,again)=>`<div class="gbar"><button class="btn alt" onclick="gHome()">← Juegos</button><h3>${title}</h3>${extra}<button class="btn alt" onclick="gStatsOpen()" title="Estadísticas" aria-label="Ver estadísticas">📊</button><button class="btn alt" onclick="${again}">🎲 Otro Pokémon</button></div>`;
 const gSay=t=>{const pr=document.querySelector('.prof');if(pr){pr.classList.remove('talk');void pr.offsetWidth;pr.classList.add('talk')}const e=$('g-say');if(e){e.textContent=t;e.classList.remove('say');void e.offsetWidth;e.classList.add('say')}};
 
 /* ==================== POKÉWORDLE ==================== */
