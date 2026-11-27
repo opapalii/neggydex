@@ -5,7 +5,7 @@ Base: `origin/main` (4cfd34e), con los controles RPG de 16ba1e0 ya integrados. L
 | Fase | Estado de esta entrega |
 |---|---|
 | 1 · Identidad y navegación | Ruta de montaña original en SVG integrado, entrada e identificación de los cinco destinos, selección accesible y navegación con flechas, Inicio y Fin. Búsqueda con instrucción estable. |
-| 2 · Herramientas | Cabeceras del laboratorio y de equipos integradas. Siguiente tarea: verificar evolución y acceso al equipo con datos representativos y mejorar la ficha. |
+| 2 · Herramientas | La ficha permite reintentar la cadena evolutiva y añadir la especie al primer hueco libre. Los seis puestos permiten reordenar miembros con sus movimientos. El laboratorio descarta resultados obsoletos al quitar la potencia y expresa el intervalo de golpes suponiendo daño constante sin curación. Recorrido móvil probado con datos controlados. |
 | 3 · Arena | Corregidos atajos de cambio y salida del selector obligatorio. Regresión de rendición antes y después de un turno. Rediseño de la arena pendiente. |
 | 4 · Motor | Se conserva el motor existente. Gen. VI como referencia para una futura revisión del daño, críticos y megaevolución. La cobertura actual mezcla generaciones. |
 | 5 · Recreativa | Ocho juegos disponibles tras recuperar Laboratorio de tipos y Pasaporte regional. Probados respuestas, registros y retorno al menú de los dos juegos recuperados. Pendiente la renovación de los demás. |
@@ -24,4 +24,4 @@ Base: `origin/main` (4cfd34e), con los controles RPG de 16ba1e0 ya integrados. L
 
 Las [capturas](rpg-review/) comparan los cinco destinos en 375, 768 y 1440 px. Los archivos before y after usan el mismo catálogo de prueba en caché, con recursos remotos bloqueados. Permiten comprobar disposición, selección, contraste y encabezados incluso sin sprites. El paisaje es vectorial original dibujado para este proyecto. El acceso a neggy.dev devolvió 403 en el proxy antes de cargar la página.
 
-Ejecutar desde la raíz: `node --test --test-concurrency=3 tests/*.cjs`. La prueba de arena sustituye la preparación remota de los equipos por datos fijos y usa una semilla. Ejecuta el bucle, los menús, las animaciones, el cálculo y el resultado reales. Quedan por cubrir victoria, derrota por debilitamiento, evolución, intercambio de equipos y efectos especiales de movimientos.
+Ejecutar desde la raíz: `node --test --test-concurrency=3 tests/*.cjs`. La prueba de arena sustituye la preparación remota de los equipos por datos fijos y usa una semilla. Ejecuta el bucle, los menús, las animaciones, el cálculo y el resultado reales. La fase 2 cubre reintento de linaje, evolución por nivel, incorporación y reordenación en el borrador tras recargar. Siguiente tarea: fase 3, arena y registro de combate móvil. Quedan por cubrir victoria, derrota por debilitamiento, intercambio de equipos y efectos especiales de movimientos.
