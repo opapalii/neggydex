@@ -1126,6 +1126,25 @@ header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
   #ar .hpb{height:7px}
   #bt-game .battle-feed{padding:8px 12px;font-size:.9rem}
 }
+/* Cartas del salón recreativo */
+.memory-feature{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;margin:14px 0 22px;padding:clamp(15px,4vw,46px);border:1px solid #bd925c;border-radius:9px;background:radial-gradient(ellipse at 92% 12%,#553957,#24243d 64%);color:#fff4d5}
+.memory-feature h3{font-size:clamp(1.6rem,5vw,3.3rem);letter-spacing:-.04em}
+.memory-feature p{line-height:1.45;margin:8px 0 16px;color:#eee0eb}
+.memory-art{display:flex;margin-inline:8px;font-size:clamp(1.5rem,7vw,4.8rem)}
+.memory-art span,.memory-card:not(.revealed){display:grid;place-items:center;border:1px solid #a787bc;border-radius:8px;background:repeating-linear-gradient(135deg,#36305a 0 8px,#302849 8px 16px);color:#f9d19a}
+.memory-art span{width:clamp(34px,9vw,95px);aspect-ratio:3/4;transform:rotate(-12deg);box-shadow:0 6px #161429}
+.memory-art span+span{margin-left:-13px;transform:rotate(12deg)}
+.memory-panel{max-width:660px;margin:16px auto;padding:clamp(12px,3vw,24px);background:#212139;border:1px solid #665d86;border-radius:10px}
+.memory-options{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-block:0 12px}
+.memory-options select{min-height:44px;padding:0 10px;min-width:54px}
+.memory-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.memory-card{position:relative;display:grid;align-content:center;justify-items:center;min-width:0;min-height:64px;aspect-ratio:1/1;border:1px solid #c2a86e;border-radius:8px;background:#faf0d6;color:#252036;font-weight:800;font-size:clamp(.65rem,2vw,1rem);cursor:pointer}
+.memory-card:not(.revealed){font-size:1.5rem}
+.memory-card img{width:clamp(28px,7vw,65px);height:clamp(25px,6vw,58px);object-fit:contain;image-rendering:pixelated}
+.memory-card span{max-width:100%;overflow-wrap:anywhere;padding-inline:2px}
+.memory-card.matched{background:#caebcc;border-color:#84b98b;cursor:default}
+.memory-card.matched::after{content:"✓";position:absolute;right:3px;top:1px}
+.memory-status{min-height:2.5em;margin:12px 0;color:#fff0c9}
 </style>
 </head>
 <body>
@@ -1313,7 +1332,7 @@ header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
   <div class="bres" id="bt-res" hidden></div>
 </section>
 <section class="view" id="v-games">
-  <div class="thead"><div><h2>Salón recreativo</h2><p class="hint" style="margin:0">Un descanso entre combates: pon a prueba lo que sabes de los 1025 Pokémon.</p></div></div>
+  <div class="thead"><div><h2>Salón recreativo</h2></div></div>
   <div id="gm-home"></div>
   <div id="gm-area" hidden></div>
   <div class="bres" id="gm-dlg" hidden onclick="if(event.target===this)this.hidden=true"></div>
@@ -2794,6 +2813,7 @@ function gTog(i){
   if(i<0)GM.gens.clear();else if(GM.gens.has(i))GM.gens.delete(i);else GM.gens.add(i);
   try{localStorage.setItem('neggydex_gpool_v1',JSON.stringify([...GM.gens]))}catch(e){}
   gHome();
+  document.querySelector(`[data-generation="${i}"]`)?.focus();
 }
 const GK='neggydex_games_v1',STARTERS=new Set();
 [1,4,7,152,155,158,252,255,258,387,390,393,495,498,501,650,653,656,722,725,728,810,813,816,906,909,912].forEach(b=>{for(let i=0;i<3;i++)STARTERS.add(b+i)});
@@ -2846,7 +2866,12 @@ function gHome(){
   GM.epoch++;GM.mode=null;$('gm-area').hidden=true;$('gm-home').hidden=false;
   const S=gStats(),pn=all.filter(gInPool).length;
   const st=id=>{const t=S[id]||{};return id==='s'?`Mejor racha ${t.best||0} · Partidas ${t.played||0}`:`Victorias ${t.won||0}/${t.played||0} · Racha ${t.streak||0} · Mejor ${t.best||'—'}`};
-  $('gm-home').innerHTML=`<div class="gpool"><span>Pool de Pokémon · ${pn}</span><button class="gpc ${GM.gens.size?'':'on'}" onclick="gTog(-1)"><b>★</b>Todas</button>${GENS.map((g,i)=>`<button class="gpc ${GM.gens.has(i)?'on':''}" onclick="gTog(${i})"><b>${g[0]}</b>${g[1]}</button>`).join('')}</div>
+  $('gm-home').innerHTML=`<div class="gpool"><span>Generaciones · ${pn} Pokémon</span><button class="gpc ${GM.gens.size?'':'on'}" aria-pressed="${!GM.gens.size}" data-generation="-1" onclick="gTog(-1)"><b>★</b>Todas</button>${GENS.map((g,i)=>`<button class="gpc ${GM.gens.has(i)?'on':''}" aria-pressed="${GM.gens.has(i)}" data-generation="${i}" onclick="gTog(${i})"><b>${g[0]}</b>${g[1]}</button>`).join('')}</div>
+    <div class="memory-feature">
+      <div><h3>Memoria Pokémon</h3><p>Da la vuelta a las cartas y encuentra todas las parejas.</p>
+        <button class="btn" id="memory-play" onclick="gOpen('memory')">Jugar a Memoria</button></div>
+      <div class="memory-art" aria-hidden="true"><span>?</span><span>?</span></div>
+    </div>
     <div class="gcards">${GCARDS.map(c=>`<button class="gcard ${c[1]}" onclick="gOpen('${c[0]}')"><div class="gprev">${c[5]()}</div><div class="gtl"><h3>${c[2]}</h3><em class="gtag t${c[3]}">${c[3]}</em></div><p>${c[4]}</p><div class="gst">${st(c[0])}</div></button>`).join('')}</div>`;
 }
 function gStatsOpen(m){
@@ -2863,6 +2888,7 @@ function gStatsOpen(m){
 function gOpen(m){
   if(!all.length){toast('La Pokédex aún está cargando…');return}
   GM.mode=m;$('gm-home').hidden=true;$('gm-area').hidden=false;window.scrollTo({top:0});
+  if(m==='memory'){memoryStart(4);return}
   if(m==='w')wStart();else if(m==='g')gStart();else if(m==='s')sdStart();else if(m==='t'||m==='r')quizStart(m);else xStart(m);
 }
 const gBar=(title,extra,again)=>`<div class="gbar"><button class="btn alt" onclick="gHome()">← Juegos</button><h3>${title}</h3>${extra}<button class="btn alt" onclick="gStatsOpen()" title="Estadísticas" aria-label="Ver estadísticas">📊</button><button class="btn alt" onclick="${again}">🎲 Otro Pokémon</button></div>`;
@@ -3369,6 +3395,93 @@ function quizAnswer(value){
   const answer=QUIZ.mode==='t'?'×'+String(QUIZ.answer).replace('.',','):GENS[QUIZ.answer][1];
   const why=QUIZ.mode==='t'?`El ataque ${tn(QUIZ.attack)} frente a ${p.types.map(tn).join(' / ')} tiene multiplicador ${answer}.`:`${p.es} apareció por primera vez en ${answer}.`;
   $('quiz-result').innerHTML=`<strong>${ok?'¡Correcto!':'Casi…'}</strong><p>${esc(why)}</p><small>Victorias ${stats.won}/${stats.played} · Racha ${stats.streak}</small><div class="quiz-actions"><button class="btn" onclick="quizStart('${QUIZ.mode}')">Siguiente Pokémon</button><button class="btn alt" onclick="openModal(${p.id})">Ver ficha</button></div>`;
+}
+
+/* Memoria usa el mismo filtro regional y almacena récords por tamaño de tablero. */
+const memory={run:0,size:4,open:[],matched:new Set(),turns:0};
+function memoryStart(size){
+  const pool=all.filter(gInPool);
+  const area=$('gm-area');
+  const records=gStats().memory||{};
+  const best=records[size];
+  memory.run++;
+  Object.assign(memory,{size,open:[],matched:new Set(),turns:0});
+  const sizes=[4,6,8];
+  area.innerHTML=`<div class="gbar"><button class="btn alt" onclick="gHome();$('memory-play').focus()">← Juegos</button><h3>Memoria Pokémon</h3></div>
+    <div class="memory-panel">
+      <div class="memory-options"><label for="memory-size">Parejas</label><select id="memory-size" onchange="memoryStart(Number(this.value))">
+        ${sizes.map(n=>`<option value="${n}" ${size===n?'selected':''} ${pool.length<n?'disabled':''}>${n}</option>`).join('')}
+      </select><button class="btn alt" onclick="memoryStart(memory.size)">Nueva partida</button></div>
+      <div>Récord: ${best==null?'—':best+' turnos'}</div>
+      <p id="memory-status" class="memory-status" role="status">Encuentra dos cartas iguales en cada turno.</p>
+      <div id="memory-board" class="memory-board"></div>
+    </div>`;
+  $('memory-size').focus({preventScroll:true});
+  if(pool.length<size){
+    $('memory-status').textContent='No hay suficientes Pokémon en la selección. Elige más generaciones o menos parejas.';
+    return;
+  }
+  const shuffle=cards=>{
+    for(let i=cards.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [cards[i],cards[j]]=[cards[j],cards[i]];
+    }
+    return cards;
+  };
+  const picks=shuffle(pool).slice(0,size);
+  memory.cards=shuffle([...picks,...picks]);
+  $('memory-board').innerHTML=memory.cards.map((_,i)=>`<button class="memory-card" aria-label="Carta ${i+1}, oculta" onclick="memoryFlip(${i})">?</button>`).join('');
+}
+function memoryFlip(i){
+  if(GM.mode!=='memory'||memory.open.length===2||memory.open.includes(i)||memory.matched.has(i))return;
+  const board=$('memory-board'),button=board.children[i],mon=memory.cards[i];
+  const status=$('memory-status');
+  memory.open.push(i);
+  button.classList.add('revealed');
+  button.setAttribute('aria-label',`Carta ${i+1}, ${mon.es}`);
+  button.innerHTML=`<img src="${mini(mon.id)}" onerror="this.hidden=true" alt=""><span>${esc(mon.es)}</span>`;
+  if(memory.open.length===1){
+    status.textContent=`${mon.es}. Elige otra carta.`;
+    return;
+  }
+  const [first,second]=memory.open;
+  const turns=++memory.turns;
+  if(memory.cards[first].id!==memory.cards[second].id){
+    const run=memory.run,epoch=GM.epoch;
+    status.textContent=`Distintas · ${turns} turnos`;
+    setTimeout(()=>{
+      if(GM.mode!=='memory'||memory.run!==run||GM.epoch!==epoch)return;
+      for(const index of memory.open){
+        const card=board.children[index];
+        card.classList.remove('revealed');
+        card.setAttribute('aria-label',`Carta ${index+1}, oculta`);
+        card.textContent='?';
+      }
+      memory.open=[];
+    },850);
+    return;
+  }
+  for(const index of memory.open){
+    memory.matched.add(index);
+    board.children[index].classList.add('matched');
+    board.children[index].setAttribute('aria-disabled','true');
+    board.children[index].setAttribute('aria-label',`Carta ${index+1}, ${mon.es}, pareja encontrada`);
+  }
+  memory.open=[];
+  status.textContent=`${memory.matched.size/2}/${memory.size} parejas · ${turns} turnos`;
+  if(memory.matched.size!==memory.cards.length)return;
+  const stats=gStats();
+  stats.memory ||= {};
+  const best=stats.memory[memory.size];
+  const record=best==null||turns<best;
+  if(record){
+    stats.memory[memory.size]=turns;
+    try{localStorage.setItem(GK,JSON.stringify(stats))}catch(e){}
+  }
+  status.textContent=`¡Tablero completo en ${turns} turnos!${record?' Nuevo récord personal.':''}`;
+  const again=document.querySelector('.memory-options button');
+  again.textContent='Jugar otra vez';
+  again.focus();
 }
 
 /* ================= Más calidad de vida ================= */
