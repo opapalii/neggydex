@@ -1082,6 +1082,8 @@ header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
 .view :is(.thead,.field-section-heading) h2{color:var(--station)}
 .tabs .tab[aria-current="page"]{color:#fff;background:#843c36;border-radius:5px;box-shadow:inset 0 -3px #ef9b81}
 @media(max-width:700px){#v-dex .hero::after{background:#17352dba}.view .thead{align-items:stretch}}
+.dex-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-top:18px}.dex-actions .calcgo{margin:0}
+.slot-order{display:flex;align-items:center;gap:8px;margin-top:12px}.slot-order button{min-width:44px;min-height:44px}
 </style>
 </head>
 <body>
@@ -1548,7 +1550,7 @@ const statsHTML=m=>`<div class="facts"><div><b>${(m.height/10).toFixed(1).replac
 const bodyHTML=(m,tys)=>`<div class="field-details"><section class="field-detail"><div class="field-label">01 / PERFIL</div><div id="mstats">${statsHTML(m)}</div></section>
     <section class="field-detail"><div class="field-label">02 / LINAJE</div><div id="evo"><div class="none">Cargando evolución…</div></div></section>
     <section class="field-detail"><div class="field-label">03 / AFINIDADES</div><h4>Debilidades y resistencias</h4><div id="mweak">${weakHTML(tys)}</div></section></div>
-    <div style="display:flex;gap:10px"><button class="calcgo" onclick="closeModal();setSide('a',${m.id});view('calc')">Usar de atacante</button><button class="calcgo" style="background:var(--panel2)" onclick="closeModal();setSide('d',${m.id});view('calc')">Usar de defensor</button></div>`;
+    <div class="dex-actions"><button class="btn" onclick="addFromDex(${m.id})" ${TEAM.m.every(Boolean)?'disabled':''}>${TEAM.m.every(Boolean)?'Equipo completo (6/6)':'Añadir al equipo'}</button><button class="calcgo" onclick="closeModal();setSide('a',${m.id});view('calc')">Usar de atacante</button><button class="calcgo" style="background:var(--panel2)" onclick="closeModal();setSide('d',${m.id});view('calc')">Usar de defensor</button></div>`;
 /* Sprites animados pixel art estilo Blanco/Negro (Pokémon Showdown "gen5ani": 2D, sin modelos 3D).
    Orden: GIF animado -> GIF animado de PokeAPI -> PNG estático (con animación de reposo por CSS) */
 const PS='https://play.pokemonshowdown.com/sprites/';
@@ -1649,7 +1651,7 @@ async function pickMove(slug){
     try{const m=await (await fetch(API+'move/'+slug)).json();o={n:o?o.n:pretty(slug),p:m.power||0,t:m.type.name,c:m.damage_class.name}}catch(e){return}
   }
   S.move=o;
-  if(o.c==='status'){$('res').innerHTML='<span style="color:var(--muted)">Ese movimiento no hace daño directo. Prueba con otro.</span>';return}
+  if(o.c==='status'){$('mv-pow').value=0;$('res').innerHTML='<span style="color:var(--muted)">Ese movimiento no hace daño directo. Prueba con otro.</span>';return}
   $('mv-pow').value=o.p||0;$('mv-type').value=o.t;$('mv-cat').value=o.c;
   syncStats();calc();
 }
@@ -1662,7 +1664,7 @@ const rollDamage=(base,i,mult)=>Math.floor(Math.floor(base*i/100)*mult);
 const typeEff=(mt,dt)=>dt.reduce((m,t)=>m*((CH[mt]&&CH[mt][t]!==undefined)?CH[mt][t]:1),1);
 function calc(){
   const pow=+$('mv-pow').value;
-  if(!pow){if(S.move&&S.move.c!=='status')$('res').innerHTML='<span style="color:var(--muted)">Este movimiento tiene potencia variable. Escribe la potencia a mano.</span>';return}
+  if(pow<=0){$('res').textContent=S.move?.c==='status'?'Este movimiento no hace daño directo.':'Introduce una potencia mayor que cero para calcular el daño.';return}
   const L=+$('a-lv').value||50,cat=$('mv-cat').value,mt=$('mv-type').value;
   let A=+$('a-stat').value||100,D=+$('d-stat').value||100;const hp=+$('d-hp').value||1;
   const abi=$('a-abi').value;
@@ -1686,7 +1688,7 @@ function calc(){
   if(da==='ms')dm=.5;if(da==='fat'&&(mt==='fire'||mt==='ice'))dm=.5;
   const extra=(it===1.3||it===1.2?it:1)*w*crit*burn*dm;
   const rolls=[];
-  for(let i=85;i<=100;i++)rolls.push(rollDamage(base0,i,stab*eff*extra));
+  for(let i=85;i<=100;i++)rolls.push(eff===0?0:Math.max(1,rollDamage(base0,i,stab*eff*extra)));
   const mn=rolls[0],mx=rolls[15];
   const p=v=>(v/hp*100).toFixed(1).replace('.',',');
   const w0=Math.min(100,mx/hp*100);
@@ -1696,9 +1698,9 @@ function calc(){
   else if(mn>=hp){v='Debilita de un golpe (OHKO garantizado)';col='var(--ok)'}
   else if(mx>=hp){v=`Puede debilitar de un golpe (${ohko} de 16 giros)`;col='var(--warn)'}
   else{
-    const n=Math.ceil(hp/mn);
-    v=`Debilita en ${n} golpes seguro`;col=n<=2?'var(--warn)':'var(--bad)';
-    if(n>2&&mx*(n-1)>=hp)v+=`, con suerte en ${n-1}`;
+    const fastest=Math.ceil(hp/mx),slowest=Math.ceil(hp/mn);
+    const hits=fastest===slowest?String(fastest):fastest+'–'+slowest;
+    v=`${hits} golpes con estos ajustes, sin curación`;col=slowest<=2?'var(--warn)':'var(--bad)';
   }
   const fx=String(eff).replace('.',',');
   if(eff!==1&&eff!==0)detail=eff>1?`Es súper eficaz (x${fx})`:`No es muy eficaz (x${fx})`;
@@ -1757,10 +1759,10 @@ function evoHTML(root,cur){
 async function loadEvo(id){
   const box=$('evo');if(!box)return;
   try{
-    const sp=await (await fetch(API+'pokemon-species/'+id)).json();setForms(id,sp);
+    const sp=await (await fetch(API+'pokemon-species/'+id)).json();if(modalId!==id)return;setForms(id,sp);
     const u=sp.evolution_chain.url,ch=chainCache[u]||(chainCache[u]=await (await fetch(u)).json());
     if(modalId===id&&$('evo'))$('evo').innerHTML=evoHTML(ch.chain,id);
-  }catch(e){if(modalId===id&&$('evo'))$('evo').innerHTML='<div class="none">No se pudo cargar la evolución.</div>'}
+  }catch(e){if(modalId===id&&$('evo'))$('evo').innerHTML='<div class="none">No se pudo cargar la evolución. <button class="btn alt" onclick="loadEvo('+id+')">Reintentar evolución</button></div>'}
 }
 
 /* ---------- Constructor de equipos ---------- */
@@ -1776,6 +1778,10 @@ function loadTeams(){
   try{const d=JSON.parse(localStorage.getItem(DK)||'null');if(d&&Array.isArray(d.m)&&d.m.length===6)TEAM=d}catch(e){}
 }
 function persist(){try{localStorage.setItem(LSK,JSON.stringify({teams:TEAMS}));return true}catch(e){toast('El navegador no permite guardar aquí.');return false}}
+$('t-name').addEventListener('input',event=>{
+  TEAM.name=event.target.value;
+  try{localStorage.setItem(DK,JSON.stringify(TEAM))}catch(e){}
+});
 function saveTeam(asNew){
   TEAM.name=$('t-name').value.trim()||'Equipo sin nombre';
   const snap=JSON.parse(JSON.stringify(TEAM.m));
@@ -1789,6 +1795,25 @@ function loadTeam(id){const t=TEAMS.find(x=>x.id===id);if(!t)return;TEAM={id:t.i
 function delTeam(id){
   const t=TEAMS.find(x=>x.id===id);if(!t||!confirm('¿Eliminar el equipo «'+t.name+'»?'))return;
   TEAMS=TEAMS.filter(x=>x.id!==id);if(TEAM.id===id)TEAM.id=null;persist();renderSaved();
+}
+function addFromDex(id){
+  const slot=TEAM.m.findIndex(member=>!member);
+  if(modalId!==id || slot===-1)return;
+  TEAM.m[slot]={id,mv:[]};
+  closeModal();
+  view('team');
+  renderTeam();
+  focusTeamSlot(slot);
+}
+function focusTeamSlot(index){
+  const control=$('slots').children[index].querySelector('.slot-order button:enabled');
+  control.focus({preventScroll:true});
+  control.scrollIntoView({block:'center',behavior:'instant'});
+}
+function shiftSlot(from,to){
+  [TEAM.m[from],TEAM.m[to]]=[TEAM.m[to],TEAM.m[from]];
+  renderTeam();
+  focusTeamSlot(to);
 }
 function rmSlot(i){TEAM.m[i]=null;renderTeam()}
 function rmMove(i,j){TEAM.m[i].mv.splice(j,1);renderTeam()}
@@ -1806,6 +1831,9 @@ function slotHTML(s,i){
   const mv=s.mv.map((m,j)=>`<div class="mr" style="--t:${tc(m.t)}"><span class="mi" title="${CAT[m.c]||''}">${m.c==='physical'?'⚔️':m.c==='special'?'✨':'🌀'}</span><span class="mn">${esc(m.n)}</span>${badge(m.t)}<button onclick="rmMove(${i},${j})" aria-label="Quitar movimiento">×</button></div>`).join('');
   return `<div class="slot" style="--c1:${c1};--c2:${c2}"><span class="sn2">${i+1}</span><button class="rm" onclick="rmSlot(${i})" aria-label="Quitar Pokémon" title="Quitar">×</button>
     <div class="top"><div class="pic"><img data-id="${s.id}" alt=""></div><div class="info"><div class="nm">${p.es}</div><div class="types" style="justify-content:flex-start">${ty.map(badge).join('')}</div><input id="sp${i}" class="chg" placeholder="Cambiar Pokémon…" autocomplete="off"></div></div>
+    <div class="slot-order"><span>Posición ${i+1} de 6</span>
+      <button class="btn alt" aria-label="Mover a la posición anterior" onclick="shiftSlot(${i},${i-1})" ${i===0?'disabled':''}>←</button>
+      <button class="btn alt" aria-label="Mover a la posición siguiente" onclick="shiftSlot(${i},${i+1})" ${i===5?'disabled':''}>→</button></div>
     <div class="sbars">${bars}</div>
     <div class="mh2">Movimientos <b>${s.mv.length}/4</b></div>
     <div class="mlist">${mv}</div>
