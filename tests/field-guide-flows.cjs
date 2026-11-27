@@ -25,7 +25,7 @@ test('evolution retry, team order and manual damage input', async () => {
       t:Date.now(),n:Array.from({length:1025},(_,i)=>['bulbasaur','ivysaur'][i]||'pokemon'+i),ty:Array(1025).fill(['grass'])
     })));
     await page.goto('http://127.0.0.1:'+server.address().port);
-    await page.locator('.card').first().click();
+    await page.locator('.card').first().press('Enter');
     await page.getByRole('button',{name:'Reintentar evolución'}).click();
     await page.getByText('Nivel 16',{exact:false}).first().waitFor();
     await page.locator('#evo .en').nth(1).press('Enter');

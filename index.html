@@ -1084,6 +1084,48 @@ header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
 @media(max-width:700px){#v-dex .hero::after{background:#17352dba}.view .thead{align-items:stretch}}
 .dex-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-top:18px}.dex-actions .calcgo{margin:0}
 .slot-order{display:flex;align-items:center;gap:8px;margin-top:12px}.slot-order button{min-width:44px;min-height:44px}
+/* Arena del mirador */
+#bt-game{max-width:1050px;margin-inline:auto}
+#ar{height:clamp(250px,47vw,470px);aspect-ratio:auto;background:#25483f;border:2px solid #638a7a;border-radius:12px 12px 0 0;box-shadow:none}
+#bt-prep .arena-cover{min-height:clamp(160px,23vw,268px);isolation:isolate;align-items:end;border:1px solid #638a7a;border-radius:12px;background:#25483f}
+#bt-prep .arena-cover::after{inset:0;width:auto;height:auto;opacity:1;background:linear-gradient(0deg,#0c2524 0%,#0c25248c 44%,transparent 85%);z-index:-1}
+.arena-cover .arena-landscape{z-index:-2}
+#bt-prep .arena-cover h2{font-size:clamp(1.75rem,5vw,3.5rem);color:#ffe2bd}
+#bt-prep .arena-cover .hint{color:#e2eee3}
+.arena-landscape{position:absolute;inset:0;width:100%;height:100%}
+#ar::before,#ar::after{display:none}
+#ar .plat{background:#789272;border:2px solid #c0c99b;box-shadow:0 9px #223d35,0 14px 20px #142d24aa}
+#ar .plat::after{content:"";position:absolute;inset:12% 17%;border:1px dashed #f0edbe99;border-radius:50%}
+#ar .hud{backdrop-filter:none;background:#102724;color:#fff;border:1px solid #85a897;border-left:4px solid #e9ad77;border-radius:7px;padding:9px 12px}
+#ar .hme{border-left-color:#9ed2a3}
+#ar .hh{flex-wrap:wrap;gap:3px 8px;margin-bottom:5px}
+#ar .lv,#ar .ht{color:#d0e3d8}
+.hud-side{color:#f2ba90;font-size:.65rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.hme .hud-side{color:#aee0b4}
+#ar .turnb{top:9px;background:#102724;border-color:#81a895;border-radius:4px;white-space:nowrap}
+#bt-game .ctl{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:0;background:#152b29;border:1px solid #638a7a;border-top:0;border-radius:0 0 12px 12px}
+.battle-feed{margin:0;padding:11px 16px;min-height:3.1em;background:#e8e7cd;color:#152c29;font-weight:700}
+#bt-game .cp{border:0;border-radius:0;background:transparent;padding:10px 14px}
+#bt-game .cbox{min-height:0}
+#bt-game .menu{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#bt-game .bm{min-height:49px;padding:8px;flex-direction:row;justify-content:center;border-radius:5px}
+#bt-game .bm:first-child{background:#d29662;color:#211913;border-color:#eabd92}
+#bt-game .lnk{min-height:44px;margin:3px auto 0;color:#e9dbc8}
+#bt-game .battle-history{border-top:1px solid #52716b;padding-block:0 8px}
+.battle-history summary{cursor:pointer;min-height:44px;align-content:center;font-weight:700;color:#dae9df}
+.battle-history .blog{height:clamp(110px,24vh,200px);padding:8px;background:#0e221f}
+#bt-game .bopt{display:inline-block;margin:8px}
+#bt-motion{min-height:44px}
+#bt-game[data-still] .bsp img{animation:none}
+@media(max-width:700px){
+  #ar .hud{width:45%;padding:6px 8px}
+  #ar .hen{top:19%;left:3%}
+  #ar .hme{bottom:7%;right:3%}
+  #ar .hh .nm{font-size:.84rem}
+  #ar .hh .lv{font-size:.68rem;white-space:normal}
+  #ar .hpb{height:7px}
+  #bt-game .battle-feed{padding:8px 12px;font-size:.9rem}
+}
 </style>
 </head>
 <body>
@@ -1219,8 +1261,19 @@ header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
   <div id="analysis"></div>
 </section>
 <section class="view" id="v-battle">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="arena-art" viewBox="0 0 960 480" preserveAspectRatio="xMidYMid slice">
+        <path fill="#23454e" d="M0 0h960v480H0z"/>
+        <path fill="#37636a" d="M0 110h960v180H0z"/>
+        <circle cx="715" cy="82" r="54" fill="#ffd795"/>
+        <path fill="#68978a" d="m0 224 178-172 85 96 74-59 138 135 109-83 56 40 129-119 191 142v276H0z"/>
+        <path fill="#31655c" d="m0 195 97-50 144 54 109-32 130 71 135-53 100 26 133-59 112 42v286H0z"/>
+        <path fill="#25483f" d="M0 274q220-72 442-18t518-13v237H0z"/>
+        <path fill="#345e4b" d="M0 322q216-80 442-31t518-24v213H0z"/>
+        <path fill="#497357" d="M0 398q280-97 537-52t423-32v166H0z"/>
+        <path fill="none" stroke="#a9b982" stroke-opacity=".24" stroke-width="2" d="M0 360q220-76 442-26t518-29M0 439q277-84 557-42t403-27"/>
+</symbol></svg>
   <div id="bt-prep">
-    <div class="thead"><div><h2>Arena de combate</h2><p class="hint" style="margin:0">Elige un modo, monta tu equipo de hasta 6 Pokémon (nivel 50) y demuestra quién manda.</p></div></div>
+    <div class="thead arena-cover"><svg class="arena-landscape" aria-hidden="true"><use href="#arena-art"/></svg><div class="arena-cover-copy"><h2>Arena de combate</h2><p class="hint" style="margin:0">Elige un modo, monta tu equipo de hasta 6 Pokémon (nivel 50) y demuestra quién manda.</p></div></div>
     <div class="modes" id="bt-modes"></div>
     <div class="panel"><h3>Dificultad</h3><div class="diffs" id="bt-diffs"></div></div>
     <div class="panel">
@@ -1234,18 +1287,26 @@ header{background:#1e2227;border-color:#ffffff16}header.hide{transform:none}
   </div>
   <div id="bt-game" hidden>
     <div class="arena" id="ar">
+      <svg class="arena-landscape" aria-hidden="true"><use href="#arena-art"/></svg>
       <div class="plat pe"></div><div class="plat pp"></div>
       <div class="bsp e"><img id="b-se" alt=""></div>
       <div class="bsp p"><img id="b-sp" alt=""></div>
       <div class="fxl" id="b-fx"></div><div class="flash" id="b-fl"></div>
       <div class="turnb" id="b-turn">Turno 1</div>
-      <div class="hud hen" id="b-he"><div class="hh"><b class="nm"></b><span class="lv"></span><span class="stx"></span></div><div class="htp"></div><div class="hpb"><i></i></div><div class="hpt"><span class="ht"></span><span class="pips"></span></div></div>
-      <div class="hud hme" id="b-hp"><div class="hh"><b class="nm"></b><span class="lv"></span><span class="stx"></span></div><div class="htp"></div><div class="hpb"><i></i></div><div class="hpt"><span class="ht"></span><span class="pips"></span></div></div>
+      <div class="hud hen" id="b-he"><div class="hud-side">Rival</div><div class="hh"><b class="nm"></b><span class="lv"></span><span class="stx"></span></div><div class="htp"></div><div class="hpb"><i></i></div><div class="hpt"><span class="ht"></span><span class="pips" role="img"></span></div></div>
+      <div class="hud hme" id="b-hp"><div class="hud-side">Tu equipo</div><div class="hh"><b class="nm"></b><span class="lv"></span><span class="stx"></span></div><div class="htp"></div><div class="hpb"><i></i></div><div class="hpt"><span class="ht"></span><span class="pips" role="img"></span></div></div>
     </div>
     <div class="ctl">
-      <div class="cp"><h4>ACCIONES</h4><div class="cbox" id="bt-ctl"></div></div>
-      <div class="cp"><h4>REGISTRO DE COMBATE</h4><div class="blog" id="bt-log"></div>
-        <label class="bopt"><input type="checkbox" onchange="B.fast=this.checked;PREF.fast=this.checked;savePrefs()"> ⏩ Animaciones rápidas</label></div>
+      <p class="battle-feed" id="bt-feed" role="status" aria-atomic="true"></p>
+      <div class="cp battle-actions"><div class="cbox" id="bt-ctl"></div></div>
+      <details class="cp battle-history" id="bt-history">
+        <summary>Registro de combate</summary>
+        <div class="blog" id="bt-log" tabindex="0" role="region" aria-label="Historial del combate"></div>
+        <label class="bopt" for="bt-motion">Animaciones</label>
+        <select id="bt-motion" onchange="B.fast=this.value==='fast';PREF.fast=B.fast;PREF.battleStill=this.value==='off';UI.motion();UI.refreshSprites();savePrefs()">
+          <option value="normal">Normales</option><option value="fast">Rápidas</option><option value="off">Sin efectos</option>
+        </select>
+      </details>
     </div>
   </div>
   <div class="bintro" id="bt-intro" hidden></div>
@@ -2301,15 +2362,32 @@ const BASE='translate(-50%,-100%)';
 const UI={
   shown:{p:0,a:0},_res:null,
   ms:x=>x*(B.fast?.45:1),
+  still:()=>!!PREF.battleStill||matchMedia('(prefers-reduced-motion: reduce)').matches,
+  motion(){
+    $('bt-game').toggleAttribute('data-still',!!PREF.battleStill);
+    $('bt-motion').value=PREF.battleStill?'off':B.fast?'fast':'normal';
+  },
+  refreshSprites(){
+    for(const side of ['p','a']){
+      const mon=BE.act(side);
+      if(mon&&!mon.fainted&&UI.wr(side).style.opacity==='1')UI.sprite(side,mon);
+    }
+  },
   el:s=>$(s==='p'?'b-sp':'b-se'),
   wr:s=>UI.el(s).parentElement,
   hudEl:s=>$(s==='p'?'b-hp':'b-he'),
-  anim(el,kf,o){const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;return el.animate(kf,{...o,duration:reduced?0:UI.ms(o.duration),delay:reduced?0:UI.ms(o.delay||0)}).finished.catch(()=>{})},
+  anim(el,kf,o){const reduced=UI.still();return el.animate(kf,{...o,duration:reduced?0:UI.ms(o.duration),delay:reduced?0:UI.ms(o.delay||0)}).finished.catch(()=>{})},
   pos(s){const a=$('ar').getBoundingClientRect(),r=UI.el(s).getBoundingClientRect();return{x:r.left-a.left+r.width/2,y:r.top-a.top+r.height/2}},
 
   open(){
     $('bt-prep').hidden=true;$('bt-game').hidden=false;$('bt-res').hidden=true;$('bt-log').innerHTML='';
-    ['p','a'].forEach(s=>{UI.wr(s).style.opacity=0;UI.hudEl(s).style.opacity=0});$('bt-intro').hidden=true;{const fx=document.querySelector('.bopt input');if(fx)fx.checked=!!B.fast}
+    ['p','a'].forEach(s=>{UI.wr(s).style.opacity=0;UI.hudEl(s).style.opacity=0});
+    $('bt-intro').hidden=true;
+    UI.motion();
+    $('bt-history').open=false;
+    $('bt-feed').textContent='Preparando el combate…';
+    $('b-turn').textContent='Turno 1';
+    UI.lock();
     window.scrollTo({top:0});
   },
   /* --- HUD y barras de PS --- */
@@ -2317,6 +2395,7 @@ const UI={
     const m=BE.act(s),h=UI.hudEl(s);
     h.querySelector('.nm').textContent=BE.nm(m,s);h.querySelector('.htp').innerHTML=m.types.map(badge).join('');h.querySelector('.lv').textContent='Nv. '+m.lv+(m.megaOn?' · 💎 Mega':s==='p'&&m.item?' · 🎒 '+m.item.n:s==='a'&&m.mega?' · 💎':'');
     const st=h.querySelector('.stx');st.textContent=m.status?STL[m.status]:'';st.className='stx'+(m.status?' st-'+m.status:'');
+    h.querySelector('.pips').setAttribute('aria-label',BE.alive(s).length+' de '+B[s].team.length+' Pokémon en pie');
     h.querySelector('.pips').innerHTML=B[s].team.map(x=>`<i class="${x.fainted?'ko':'ok'}"></i>`).join('');
     UI.paintHp(s,UI.shown[s]);
   },
@@ -2326,6 +2405,7 @@ const UI={
     h.querySelector('.ht').textContent=s==='p'?`${Math.ceil(v)}/${m.maxHp} PS`:`${Math.ceil(pct)}%`;
   },
   hp(s){
+    if(UI.still()){UI.shown[s]=BE.act(s).hp;UI.paintHp(s,UI.shown[s]);return Promise.resolve()}
     const m=BE.act(s),from=UI.shown[s],to=m.hp,dur=UI.ms(Math.min(1000,300+Math.abs(from-to)/m.maxHp*900)),t0=performance.now();
     return new Promise(r=>{const f=t=>{const k=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-k,3);UI.paintHp(s,from+(to-from)*e);if(k<1)requestAnimationFrame(f);else{UI.shown[s]=to;r()}};requestAnimationFrame(f)});
   },
@@ -2333,7 +2413,8 @@ const UI={
   sprite(s,m){
     const el=UI.el(s),p=all[m.id-1],mg=m.megaOn&&m.mega;
     const front=(mg?[{u:PS+'gen5ani/'+mg.key+'.gif',a:1},{u:PS+'gen5/'+mg.key+'.png',a:0},{u:SPR+mg.id+'.png',a:0}]:spriteChain(p,false)).map(x=>({...x,f:1}));
-    const ch=s==='p'&&mg?[{u:PS+'gen5ani-back/'+mg.key+'.gif',a:1},{u:PS+'gen5-back/'+mg.key+'.png',a:0},{u:SPR+'back/'+mg.id+'.png',a:0},...front]:s==='p'?[{u:PS+'gen5ani-back/'+p.key+'.gif',a:1},{u:PS+'gen5-back/'+p.key+'.png',a:0},{u:SPR+'back/'+m.id+'.png',a:0},...front]:front;
+    const candidates=s==='p'&&mg?[{u:PS+'gen5ani-back/'+mg.key+'.gif',a:1},{u:PS+'gen5-back/'+mg.key+'.png',a:0},{u:SPR+'back/'+mg.id+'.png',a:0},...front]:s==='p'?[{u:PS+'gen5ani-back/'+p.key+'.gif',a:1},{u:PS+'gen5-back/'+p.key+'.png',a:0},{u:SPR+'back/'+m.id+'.png',a:0},...front]:front;
+    const ch=UI.still()?candidates.filter(sprite=>!sprite.a):candidates;
     el.classList.remove('flip','idle');el.style.width=el.style.height='';let i=0;
     const box=$('ar').clientWidth*(s==='p'?.27:.2);
     el.onload=()=>{
@@ -2365,6 +2446,7 @@ const UI={
     return Promise.resolve();
   },
   async attack(s,mv){
+    if(UI.still())return;
     const col=tc(mv.t),o=BE.other(s);let k=FXK[mv.t]||'burst';
     if(mv.c==='status'){await UI.fx('ring',col,s,s);return}
     if(mv.c==='physical'){await UI.lunge(s);if(k!=='quake'&&k!=='bolt')k='burst'}
@@ -2412,10 +2494,10 @@ const UI={
   /* --- mensajes y registro --- */
   log(t,c){const l=$('bt-log'),d=document.createElement('div');d.className='ln '+(c||'');d.textContent=t;l.appendChild(d);l.scrollTop=l.scrollHeight},
   turnHeader(n){$('b-turn').textContent='Turno '+n;const l=$('bt-log'),d=document.createElement('div');d.className='lt';d.textContent='Turno '+n;l.appendChild(d);l.scrollTop=l.scrollHeight},
-  async say(t){UI.log(t);$('bt-ctl').innerHTML=`<div class="msg">${esc(t)}</div>`;await Promise.race([sleep(720),new Promise(r=>UI._adv=r)]);UI._adv=null},
-  lock(){$('bt-ctl').innerHTML='<div class="msg">…</div>'},
+  async say(t){UI.log(t);$('bt-feed').textContent=t;if(UI.still())return;await Promise.race([sleep(720),new Promise(r=>UI._adv=r)]);UI._adv=null},
+  lock(){$('bt-ctl').replaceChildren()},
   /* --- menús: main / moves / switch --- */
-  choose(){UI.view('main');return new Promise(r=>UI._res=r)},
+  choose(){UI.view('main');$('bt-feed').textContent='¿Qué hará '+BE.act('p').name+'?';return new Promise(r=>UI._res=r)},
   forceSwitch(){UI.view('switch',true);return new Promise(r=>UI._res=r)},
   megaSel:false,
   async megaAnim(s,m){
@@ -2424,7 +2506,7 @@ const UI={
     UI.sprite(s,m);UI.hud(s);
     await UI.anim(el,[{filter:'brightness(8) saturate(0) hue-rotate(0)',transform:'scale(1.3)'},{filter:'brightness(1.6) hue-rotate(90deg)',transform:'scale(1.1)',offset:.6},{filter:'brightness(1)',transform:'scale(1)'}],{duration:650});
   },
-  pick(a){if(!UI._res)return;const r=UI._res;UI._res=null;UI.megaSel=false;r(a)},
+  pick(a){if(!UI._res)return;const r=UI._res;UI._res=null;UI.megaSel=false;UI.lock();r(a)},
   view(k,forced){
     const me=BE.act('p'),foe=BE.act('a'),c=$('bt-ctl');
     if(k==='main'){
@@ -2450,7 +2532,7 @@ const UI={
     const win=w==='p',again='<button class="btn" onclick="btAgain()">Volver a combatir</button>',menu='<button class="btn alt" onclick="btMenu()">Volver al menú</button>';
     $('bt-res').innerHTML=`<div class="rc"><div class="big">${win?'🏆':'💀'}</div><h2>${win?'VICTORIA':'DERROTA'}</h2><p>${win?'Has derrotado a '+BE.tn()+'.':B.resigned?'Te has rendido.':'Todos tus Pokémon se han debilitado.'}</p><p class="rs">Turnos: ${B.turn} · Pokémon en pie: ${BE.alive('p').length}/${B.p.team.length}</p><div class="row2">${win?menu+again:again+menu}</div></div>`;
     $('bt-res').hidden=false;
-    if(win)for(let i=0;i<46;i++){const c=document.createElement('i');c.className='cf';
+    if(win&&!UI.still())for(let i=0;i<46;i++){const c=document.createElement('i');c.className='cf';
       c.style.cssText='left:'+Math.random()*100+'%;background:'+['#ff7a6b','#f6c76c','#7ddc9a','#8ab4ff','#c9a0ff'][i%5]+';animation-delay:'+(Math.random()*1.2)+'s;animation-duration:'+(2.4+Math.random()*1.8)+'s';$('bt-res').appendChild(c)}
   }
 };
@@ -3251,6 +3333,9 @@ function quizAnswer(value){
 
 /* ================= Más calidad de vida ================= */
 B.fast=!!PREF.fast;
+$('bt-history').addEventListener('toggle',()=>{
+  if($('bt-history').open)$('bt-log').scrollTop=$('bt-log').scrollHeight;
+});
 const RECENT=(()=>{try{return JSON.parse(localStorage.getItem('neggydex_recent_v1')||'[]')}catch(e){return[]}})();
 function pushRecent(id){const i=RECENT.indexOf(id);if(i>=0)RECENT.splice(i,1);RECENT.unshift(id);RECENT.length=Math.min(RECENT.length,8);try{localStorage.setItem('neggydex_recent_v1',JSON.stringify(RECENT))}catch(e){}}
 function shareMon(id){

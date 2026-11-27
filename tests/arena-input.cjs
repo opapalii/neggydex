@@ -6,7 +6,7 @@ const {readFileSync} = require('node:fs');
 test('arena input, forced replacement and surrender before and after attacking', async () => {
   const browser = await chromium.launch({executablePath:process.env.CHROMIUM_PATH || '/usr/bin/chromium',args:['--no-sandbox']});
   try {
-    const page = await browser.newPage({reducedMotion:'reduce'});
+    const page = await browser.newPage({viewport:{width:375,height:812}});
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('dialog', dialog => dialog.accept());
@@ -41,12 +41,22 @@ test('arena input, forced replacement and surrender before and after attacking',
       const surrender = page.locator('#bt-ctl .lnk').filter({hasText:'Rendirse'});
       await surrender.waitFor();
       if (turns) {
+        const history = page.locator('#bt-history');
+        assert.equal(await history.evaluate(el=>el.open),false);
+        await history.locator('summary').click();
+        assert.match(await page.locator('#bt-log').innerText(),/Turno 1/i);
+        await page.getByLabel('Animaciones',{exact:true}).selectOption('off');
+        await history.locator('summary').click();
+        assert.equal(await page.locator('#bt-game').getAttribute('data-still'),'');
         await page.keyboard.press('c');
         assert.equal(await surrender.isVisible(),true);
         await page.keyboard.press('a');
         await page.locator('#bt-ctl .mc').first().click();
         await surrender.waitFor();
         assert.equal(await page.evaluate(()=>BE.act('p').mv[0].pp),34);
+        await history.locator('summary').click();
+        assert.match(await page.locator('#bt-log').innerText(),/usó Placaje/);
+        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
       }
       await surrender.click();
       await page.getByText('Te has rendido.',{exact:true}).waitFor();
