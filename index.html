@@ -2003,13 +2003,14 @@ function analysisHTML(){
    Reutiliza el núcleo de daño de la calculadora: baseDamage, rollDamage, typeEff
    ========================================================================== */
 const EXCL=new Set(['hyper-beam','giga-impact','blast-burn','frenzy-plant','hydro-cannon','rock-wrecker','roar-of-time','prismatic-laser','eternabeam','meteor-assault','solar-beam','solar-blade','sky-attack','skull-bash','razor-wind','fly','dig','dive','bounce','phantom-force','shadow-force','freeze-shock','ice-burn','focus-punch','explosion','self-destruct','misty-explosion','final-gambit','mind-blown','steel-beam','metronome','sleep-talk','mirror-move','me-first','copycat','assist','struggle','counter','mirror-coat','metal-burst','bide','fake-out','last-resort','dream-eater','synchronoise','spit-up','future-sight','doom-desire','sucker-punch','thunder-cage','belch','poltergeist','steel-roller','ice-spinner']);
-const STATUS_OK=new Set(['thunder-wave','glare','stun-spore','toxic','poison-powder','will-o-wisp','sleep-powder','spore','hypnosis','sing','lovely-kiss','swords-dance','dragon-dance','nasty-plot','calm-mind','bulk-up','agility','iron-defense','amnesia','recover','roost','soft-boiled','slack-off','synthesis','moonlight','morning-sun','shell-smash','quiver-dance','work-up','growl','leer','screech','tail-whip','charm','sand-attack','flash']);
+const STATUS_OK=new Set(['protect','thunder-wave','glare','stun-spore','toxic','poison-powder','will-o-wisp','sleep-powder','spore','hypnosis','sing','lovely-kiss','swords-dance','dragon-dance','nasty-plot','calm-mind','bulk-up','agility','iron-defense','amnesia','recover','roost','soft-boiled','slack-off','synthesis','moonlight','morning-sun','shell-smash','quiver-dance','work-up','growl','leer','screech','tail-whip','charm','sand-attack','flash']);
 const SELF_DROP=new Set(['close-combat','overheat','draco-meteor','leaf-storm','psycho-boost','superpower','hammer-arm','fleur-cannon','v-create','scale-shot','clanging-scales','armor-cannon','make-it-rain','headlong-rush','spin-out','ice-hammer']);
 const AIL={paralysis:'par',burn:'brn',poison:'psn',sleep:'slp',freeze:'frz'};
-const STK={attack:'atk',defense:'def','special-attack':'spa','special-defense':'spd',speed:'spe'};
-const STN={atk:'Ataque',def:'Defensa',spa:'Ataque Esp.',spd:'Defensa Esp.',spe:'Velocidad'};
+const STK={attack:'atk',defense:'def','special-attack':'spa','special-defense':'spd',speed:'spe',accuracy:'acc',evasion:'eva'};
+const STN={atk:'Ataque',def:'Defensa',spa:'Ataque Esp.',spd:'Defensa Esp.',spe:'Velocidad',acc:'Precisión',eva:'Evasión'};
 const STM={brn:'se quemó',par:'está paralizado: le costará moverse',psn:'fue envenenado',tox:'fue gravemente envenenado',slp:'se durmió',frz:'se congeló'};
 const STL={brn:'QUE',par:'PAR',psn:'ENV',tox:'TOX',slp:'DOR',frz:'CON'};
+const zeroStages=()=>({atk:0,def:0,spa:0,spd:0,spe:0,acc:0,eva:0});
 const STRUGGLE={slug:'struggle',n:'Forcejeo',t:'normal',c:'physical',p:50,a:null,pp:1,pr:0,nt:1,rec:25,ail:'none',ailC:0,crit:0,drain:0,heal:0,flinch:0,minH:1,maxH:1,sc:0,st:[],tg:'selected-pokemon'};
 
 /* Estado de la batalla. side 'p' = jugador, 'a' = IA. Aquí es donde se enchufaría un segundo jugador (PvP). */
@@ -2022,19 +2023,34 @@ const BE={
   act:s=>B[s].team[B[s].i],
   nm:(m,s)=>s==='a'?m.name+' rival':m.name,
   stg:v=>v>=0?(2+v)/2:2/(2-v),
-  eff(m,k){let v=m.st[k]*BE.stg(m.stg[k]);if(k==='spe'&&m.status==='par')v*=.5;const ik=m.item&&m.item.k;if(k==='spe'&&ik==='choicescarf')v*=1.5;if(k==='spd'&&ik==='assaultvest')v*=1.5;return v},
+  eff(m,k,ignoreStage=false){
+    let v=m.st[k]*(ignoreStage?1:BE.stg(m.stg[k]));
+    const item=m.item?.k;
+    if(k==='spe'&&m.status==='par')v*=.25;
+    if(k==='spe'&&item==='choicescarf')v*=1.5;
+    if(k==='spd'&&item==='assaultvest')v*=1.5;
+    return v;
+  },
+  canSelect(m,i){return m.mv[i]?.pp>0&&(m.lock==null||m.lock===i)},
+  accuracy(att,def,mv){
+    if(mv.a==null)return 100;
+    const evasion=mv.tg==='user'?0:def.stg.eva??0;
+    const stage=Math.max(-6,Math.min(6,(att.stg.acc??0)-evasion));
+    return Math.min(100,mv.a*(3+Math.max(0,stage))/(3+Math.max(0,-stage)));
+  },
   moveOf:(s,i)=>i<0?{...STRUGGLE}:BE.act(s).mv[i],
   alive:s=>B[s].team.map((m,i)=>m.fainted?-1:i).filter(i=>i>=0),
   hpPct:s=>B[s].team.reduce((x,m)=>x+m.hp/m.maxHp,0)/B[s].team.length,
   /* Mismo cálculo que la calculadora: baseDamage · STAB · efectividad · crítico · quemadura · variación 85-100 */
   calc(att,def,mv,o={}){
-    const ph=mv.c==='physical',base=baseDamage(att.lv,mv.p,BE.eff(att,ph?'atk':'spa'),BE.eff(def,ph?'def':'spd'));
+    const ph=mv.c==='physical',attack=ph?'atk':'spa',defense=ph?'def':'spd';
+    const base=baseDamage(att.lv,mv.p,BE.eff(att,attack,o.crit&&att.stg[attack]<0),BE.eff(def,defense,o.crit&&def.stg[defense]>0));
     const eff=mv.nt?1:typeEff(mv.t,def.types),stab=!mv.nt&&att.types.includes(mv.t)?1.5:1;
     const it=att.item||{},ik=it.k;let im=1;if(ik==='lifeorb')im=1.3;else if(ik==='choiceband'&&ph)im=1.5;else if(ik==='choicespecs'&&!ph)im=1.5;else if(ik==='muscleband'&&ph)im=1.1;else if(ik==='wiseglasses'&&!ph)im=1.1;else if(ik==='expertbelt'&&eff>1)im=1.2;else if(it.kind==='type'&&it.t===mv.t)im=1.2;
     const mult=stab*eff*im*(o.crit?1.5:1)*(att.status==='brn'&&ph?.5:1);
     return {eff,dmg:eff===0?0:Math.max(1,rollDamage(base,o.rnd||100,mult))};
   },
-  hits(mv){if(mv.minH===mv.maxH)return mv.minH;if(mv.minH===2&&mv.maxH===5){const r=Math.random();return r<.35?2:r<.7?3:r<.85?4:5}return mv.minH+Math.floor(Math.random()*(mv.maxH-mv.minH+1))},
+  hits(mv){if(mv.minH===mv.maxH)return mv.minH;if(mv.minH===2&&mv.maxH===5){const r=Math.random();return r<.375?2:r<.75?3:r<.875?4:5}return mv.minH+Math.floor(Math.random()*(mv.maxH-mv.minH+1))},
 
   async canMove(s){
     const m=BE.act(s),n=BE.nm(m,s);
@@ -2060,7 +2076,7 @@ const BE={
     const m=BE.act(s);let did=false;
     for(const [stat,ch] of list){
       const k=STK[stat];if(!k)continue;
-      const nv=Math.max(-6,Math.min(6,m.stg[k]+ch));
+      const nv=Math.max(-6,Math.min(6,(m.stg[k]??0)+ch));
       if(nv===m.stg[k]){await UI.say(`¡${STN[k]} de ${BE.nm(m,s)} no puede ${ch>0?'subir':'bajar'} más!`);continue}
       m.stg[k]=nv;did=true;
       await UI.pop(s,`${STN[k]} ${ch>0?'▲':'▼'}`,ch>0?'pop-up':'pop-down');
@@ -2085,12 +2101,28 @@ const BE={
     if(mv.slug!=='struggle')mv.pp=Math.max(0,mv.pp-1);
     if(att.item&&/^choice/.test(att.item.k)&&mv.slug!=='struggle'&&att.lock==null)att.lock=att.mv.indexOf(mv);
     await UI.say(`${BE.nm(att,s)} usó ${mv.n}.`);
-    if(mv.a&&Math.random()*100>mv.a){await UI.miss(s);await UI.say('¡El ataque falló!');return}
+    if(mv.slug==='protect'){
+      const streak=att.protectStreak??0;
+      att.protected=streak===0||Math.random()<1/3**streak;
+      att.protectStreak=att.protected?streak+1:0;
+      await UI.say(att.protected?`¡${BE.nm(att,s)} se protegió!`:'¡La protección falló!');
+      return;
+    }
+    if(def.protected&&mv.tg!=='user'&&mv.slug!=='struggle'&&mv.slug!=='feint'){
+      await UI.say(`¡${BE.nm(def,o)} bloqueó el movimiento!`);
+      return;
+    }
+    if(mv.slug==='feint')def.protected=false;
+    if(mv.slug==='thunder-wave'&&def.types.includes('ground')){
+      await UI.say(`¡No afecta a ${BE.nm(def,o)}!`);
+      return;
+    }
+    if(mv.a!=null&&Math.random()*100>=BE.accuracy(att,def,mv)){await UI.miss(s);await UI.say('¡El ataque falló!');return}
     await UI.attack(s,mv);
     if(mv.c==='status'){await BE.statusMove(s,mv);return}
     const n=mv.maxH>1?BE.hits(mv):1;let tot=0,cnt=0;
     for(let h=0;h<n&&def.hp>0;h++){
-      const crit=Math.random()<[1/24,1/8,1/2,1][Math.min(3,mv.crit)];
+      const crit=Math.random()<[1/16,1/8,1/2,1][Math.min(3,mv.crit)];
       const r=BE.calc(att,def,mv,{crit,rnd:85+Math.floor(Math.random()*16)});
       if(r.eff===0){await UI.say(`¡No afecta a ${BE.nm(def,o)}!`);return}
       let d=Math.min(def.hp,r.dmg),sash=false;
@@ -2127,7 +2159,7 @@ const BE={
       const m=BE.act(s);if(m.fainted||m.hp<=0||B.over)continue;
       if(m.item&&m.item.k==='leftovers'&&m.hp<m.maxHp){m.hp=Math.min(m.maxHp,m.hp+Math.max(1,Math.floor(m.maxHp/16)));await UI.hp(s);await UI.say(`${BE.nm(m,s)} recuperó PS con sus Restos.`)}
       let d=0,msg='';
-      if(m.status==='brn'){d=Math.max(1,Math.floor(m.maxHp/16));msg='sufre quemaduras'}
+      if(m.status==='brn'){d=Math.max(1,Math.floor(m.maxHp/8));msg='sufre quemaduras'}
       else if(m.status==='psn'){d=Math.max(1,Math.floor(m.maxHp/8));msg='sufre envenenamiento'}
       else if(m.status==='tox'){d=Math.max(1,Math.floor(m.maxHp*m.tx/16));m.tx=Math.min(15,m.tx+1);msg='sufre envenenamiento grave'}
       if(d){m.hp=Math.max(0,m.hp-d);await UI.hp(s);await UI.say(`${BE.nm(m,s)} ${msg}.`);if(m.hp<=0)await BE.faintNow(s)}
@@ -2143,7 +2175,7 @@ const BE={
   async switchTo(s,i,forced){
     const old=BE.act(s);
     if(!forced&&!old.fainted){await UI.say(s==='p'?`¡Vuelve, ${old.name}!`:`${BE.tn()} retiró a ${old.name}.`);await UI.leave(s)}
-    old.stg={atk:0,def:0,spa:0,spd:0,spe:0};old.tx=1;old.flinch=false;old.lock=null;
+    old.stg=zeroStages();old.protected=false;old.protectStreak=0;old.tx=1;old.flinch=false;old.lock=null;
     B[s].i=i;const m=BE.act(s);
     UI.switchIn(s,m);
     await UI.say(s==='p'?`¡Adelante, ${m.name}!`:`${BE.tn()} envió a ${m.name}.`);
@@ -2159,15 +2191,23 @@ const BE={
     }
   },
   async turn(pa,aa){
-    B.turn++;BE.act('p').flinch=false;BE.act('a').flinch=false;
+    B.turn++;
+    for(const s of ['p','a']){
+      const mon=BE.act(s);
+      mon.flinch=false;
+      mon.protected=false;
+    }
     for(const [s,ac] of [['p',pa],['a',aa]])if(ac.t==='switch')await BE.switchTo(s,ac.i);
     for(const [s,ac] of [['p',pa],['a',aa]])if(ac.t==='move'&&ac.mega)await BE.mega(s);
     const q=[['p',pa],['a',aa]].filter(x=>x[1].t==='move').map(([s,ac])=>({s,mv:BE.moveOf(s,ac.i)}));
-    q.sort((x,y)=>(y.mv.pr-x.mv.pr)||(BE.eff(BE.act(y.s),'spe')-BE.eff(BE.act(x.s),'spe'))||(Math.random()-.5));
+    q.sort((x,y)=>(y.mv.pr-x.mv.pr)||(BE.eff(BE.act(y.s),'spe')-BE.eff(BE.act(x.s),'spe'))||(Math.random()<.5?-1:1));
     for(const it of q){
       if(B.over)return;
       if(BE.act(it.s).fainted)continue;
+      const mon=BE.act(it.s);
+      if(it.mv.slug!=='protect')mon.protectStreak=0;
       await BE.exec(it.s,it.mv);
+      if(it.mv.slug==='protect'&&!mon.protected)mon.protectStreak=0;
     }
     if(B.over)return;
     await BE.endTurn();
@@ -2185,18 +2225,19 @@ const BAI={
   evaluateMove(att,def,mv,diff){
     if(mv.pp<=0)return -1e9;
     if(mv.c==='status')return BAI.evalStatus(att,def,mv);
-    const dmg=BE.calc(att,def,mv,{rnd:92}).dmg,acc=(mv.a||100)/100;
+    const dmg=BE.calc(att,def,mv,{rnd:92}).dmg,acc=BE.accuracy(att,def,mv)/100;
     let sc=Math.min(dmg,def.hp)/def.maxHp*100*acc;
     if(dmg>=def.hp)sc+=(diff==='hard'?60:30)*acc;
-    if(mv.pr>0&&dmg>=def.hp)sc+=40;
+    if(mv.pr>0&&dmg>=def.hp)sc+=40*acc;
     if(diff==='hard'&&mv.ailC>0&&!def.status)sc+=mv.ailC*.15;
     return sc;
   },
   evalStatus(att,def,mv){
     let sc=0;const hp=att.hp/att.maxHp;
+    if(mv.slug==='thunder-wave'&&def.types.includes('ground'))return -30;
     if(AIL[mv.ail]){const st=mv.slug==='toxic'?'tox':AIL[mv.ail];
       const imm={brn:['fire'],par:['electric'],psn:['poison','steel'],tox:['poison','steel'],frz:['ice'],slp:[]}[st];
-      sc+=(def.status||imm.some(t=>def.types.includes(t)))?-30:({slp:45,par:32,brn:30,tox:38,psn:26,frz:40}[st]||20)*((mv.a||100)/100)}
+      sc+=(def.status||imm.some(t=>def.types.includes(t)))?-30:({slp:45,par:32,brn:30,tox:38,psn:26,frz:40}[st]||20)*BE.accuracy(att,def,mv)/100}
     if(mv.st.length){const self=/user/.test(mv.tg);
       mv.st.forEach(([k,ch])=>{const kk=STK[k];if(!kk)return;
         if(self)sc+=ch>0?(hp>.6&&att.stg[kk]<2?26:-15):-20; else sc+=ch<0?(def.stg[kk]>-2?10:-10):-10})}
@@ -2209,8 +2250,7 @@ const BAI={
     return (Math.log2(Math.max(off,.25))-Math.log2(Math.max(df,.25)))*.5+(m.hp/m.maxHp-.5)*.6+sp;
   },
   chooseMove(ai,foe,diff){
-    if(ai.lock!=null&&ai.item&&/^choice/.test(ai.item.k)&&ai.mv[ai.lock]&&ai.mv[ai.lock].pp>0)return {t:'move',i:ai.lock};
-    const ms=ai.mv.map((m,i)=>({i,s:BAI.evaluateMove(ai,foe,m,diff),m})).filter(x=>x.s>-1e8);
+    const ms=ai.mv.flatMap((m,i)=>BE.canSelect(ai,i)?[{i,s:BAI.evaluateMove(ai,foe,m,diff),m}]:[]);
     if(!ms.length)return {t:'move',i:-1};
     if(diff==='easy'){
       if(Math.random()<.4)return {t:'move',i:ms[Math.floor(Math.random()*ms.length)].i};
@@ -2272,7 +2312,7 @@ const BD={
       mega={form:item.form,id:fj.id,label:fLabel(item.form,id),key:all[id-1].key+'-'+sufOf(item.form,id).replace(/-/g,''),types:fj.types.map(t=>t.type.name),
         st:{hp:BD.stat(g.hp,L,1),atk:BD.stat(g.attack,L),def:BD.stat(g.defense,L),spa:BD.stat(g['special-attack'],L),spd:BD.stat(g['special-defense'],L),spe:BD.stat(g.speed,L)}};
     }catch(e){mega=null}}
-    return{id,key:p.key,name:p.es,lv:BD.lv,types:p.types,st,maxHp:st.hp,hp:st.hp,mv,status:null,sl:0,tx:1,stg:{atk:0,def:0,spa:0,spd:0,spe:0},fainted:false,flinch:false,item,mega};
+    return{id,key:p.key,name:p.es,lv:BD.lv,types:p.types,st,maxHp:st.hp,hp:st.hp,mv,status:null,sl:0,tx:1,stg:zeroStages(),fainted:false,flinch:false,item,mega};
   },
   /* Elige 4 movimientos coherentes: el mejor STAB de cada tipo propio + cobertura de tipos nuevos */
   async pickMoves(id){
@@ -2513,11 +2553,11 @@ const UI={
       const can=BE.alive('p').some(i=>i!==B.p.i);
       c.innerHTML=`<div class="menu"><button class="bm" onclick="UI.view('moves')"><span>⚔️</span>Ataques<em class="kb">A</em></button><button class="bm" onclick="UI.view('switch')" ${can?'':'disabled'}><span>🔄</span>Cambiar<em class="kb">C</em></button></div><button class="lnk" onclick="if(confirm('¿Rendirte?'))UI.pick({t:'resign'})">🏳️ Rendirse</button>`;
     }else if(k==='moves'){
-      const usable=me.mv.some(m=>m.pp>0);
+      const usable=me.mv.some((_,i)=>BE.canSelect(me,i));
       const cards=usable?me.mv.map((m,i)=>{
         const ef=m.c==='status'?null:typeEff(m.t,foe.types),chip=ef===null||ef===1?'':`<i class="ef ${ef>1?'good':ef===0?'no':'bad'}">×${ef===.5?'½':ef===.25?'¼':ef}</i>`;
-        return `<button class="mc" style="--t:${tc(m.t)}" onclick="UI.pick({t:'move',i:${i},mega:UI.megaSel})" ${m.pp<=0||(me.lock!=null&&me.lock!==i&&me.mv[me.lock]&&me.mv[me.lock].pp>0)?'disabled':''}><span class="mico2">${EMO[m.t]||'⚪'}</span><span><b><em class="kb">${i+1}</em>${esc(m.n)}</b><small>${CAT[m.c]} · ${tn(m.t)}</small></span>${chip}<span class="mm">${m.c==='status'?'Estado':'Pot. '+m.p} · Prec. ${m.a||'—'} · PP ${m.pp}/${m.max}</span></button>`}).join('')
-        :`<button class="mc" style="--t:#A8A878" onclick="UI.pick({t:'move',i:-1})"><span class="mico2">💢</span><span><b>Forcejeo</b><small>Sin PP restantes</small></span><span class="mm">Pot. 50 · te hace daño de retroceso</span></button>`;
+        return `<button class="mc" style="--t:${tc(m.t)}" onclick="UI.pick({t:'move',i:${i},mega:UI.megaSel})" ${BE.canSelect(me,i)?'':'disabled'}><span class="mico2">${EMO[m.t]||'⚪'}</span><span><b><em class="kb">${i+1}</em>${esc(m.n)}</b><small>${CAT[m.c]} · ${tn(m.t)}</small></span>${chip}<span class="mm">${m.slug==='protect'?'Bloquea ataques este turno':m.c==='status'?'Estado':'Pot. '+m.p} · Prec. ${m.a==null?'—':Math.round(BE.accuracy(me,foe,m))+' %'} · PP ${m.pp}/${m.max}${!m.pp?' · Sin PP':!BE.canSelect(me,i)?' · Bloqueado por el objeto':''}</span></button>`}).join('')
+        :`<button class="mc" style="--t:#A8A878" onclick="UI.pick({t:'move',i:-1})"><span class="mico2">💢</span><span><b>Forcejeo</b><small>Sin PP en los movimientos disponibles</small></span><span class="mm">Pot. 50 · retroceso del 25 % de tus PS máximos</span></button>`;
       const mb=me.mega&&!me.megaOn&&!B.p.megaUsed?`<button class="megab ${UI.megaSel?'on':''}" onclick="UI.megaSel=!UI.megaSel;UI.view('moves')">${/eternamax/.test(me.mega.form)?'🌌 Eternamax':'💎 Megaevolucionar'} · ${esc(me.mega.label)} ${UI.megaSel?'✔':''}</button>`:'';
       c.innerHTML=`${mb}<div class="mvg">${cards}</div><button class="lnk" onclick="UI.view('main')">← Volver</button>`;
     }else{
